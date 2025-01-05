@@ -1,5 +1,5 @@
 const express = require('express');
-
+const cors = require('cors');
 //routes
 const groupRoutes = require('./routes/groupRoutes');
 const studentRoutes = require('./routes/studentRoutes');
@@ -8,10 +8,11 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 
 // Routes
-app.use('/api/groups', groupRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/groups', groupRoutes);
 
 
 // Middleware de manejo de errores
