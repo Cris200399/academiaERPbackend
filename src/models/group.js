@@ -27,6 +27,11 @@ const mongoose = require('mongoose');
  *           items:
  *             type: string
  *           description: The days of the week the group meets
+ *           example: ["Monday", "Wednesday", "Friday"]
+ *         maxMembers:
+ *           type: number
+ *           description: The maximum number of members the group can have
+ *           example: 10
  *         schedule:
  *           type: string
  *           description: The schedule of the group
@@ -48,6 +53,10 @@ const groupSchema = new mongoose.Schema({
     daysOfWeek: {
         type: [String],
         required: [true, 'Days of the week are required'],
+    },
+    maxMembers: {
+        type: Number,
+        required: [true, 'Max members is required'],
     },
     schedule: {
         type: String,

@@ -15,3 +15,14 @@ exports.createGroup = async (groupData) => {
     return group;
 
 }
+
+exports.updateGroup = async (id, groupData) => {
+    const group = await Group.findById(id);
+    if (!group) {
+        throw new Error('Group not found');
+    }
+
+    Object.assign(group, groupData);
+    await group.save();
+    return group;
+}
