@@ -5,7 +5,14 @@ exports.createStudent = async (studentData) => {
     const {name, lastName, address, gender, dateOfBirth, email, phone, group, dni} = studentData;
     const student = new Student({name, lastName, address, gender, dateOfBirth, email, phone, group, dni});
     await student.save();
-    student.group = await Group.findById(group);
+    if (group) {
+        const groupDoc = await Group.findById(group);
+        if (groupDoc) {
+            groupDoc.members.push(student._id);
+            await groupDoc.save();
+            student.group = groupDoc;
+        }
+    }
     return student;
 }
 

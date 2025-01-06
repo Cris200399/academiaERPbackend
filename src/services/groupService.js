@@ -2,8 +2,8 @@ const Group = require('../models/group');
 
 exports.createGroup = async (groupData) => {
 
-    const {name, description, daysOfWeek, schedule} = groupData;
-    const group = new Group({name, description, daysOfWeek, schedule});
+    const {name, description, daysOfWeek, schedule, maxMembers} = groupData;
+    const group = new Group({name, description, daysOfWeek, schedule, maxMembers});
 
     // If groupName exists, throw an error
     const groupNameExists = await Group.find({name: name});
