@@ -10,6 +10,15 @@ exports.createGroup = async (req, res) => {
     }
 }
 
+exports.deleteGroup = async (req, res) => {
+    try {
+        await Group.findByIdAndDelete(req.params.id);
+        res.status(204).send();
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
 exports.getGroups = async (req, res) => {
     try {
         const groups = await Group.find(req.query).populate('members');
@@ -30,18 +39,10 @@ exports.updateGroup = async (req, res) => {
 
 exports.addStudentToGroup = async (req, res) => {
     try {
-        const { groupId, studentId } = req.params;
-        const group = await Group.findById(groupId);
-        if (!group) {
-            return res.status(404).json({ message: 'Group not found' });
-        }
-        if (group.members.includes(studentId)) {
-            return res.status(400).json({ message: 'Student is already a member of the group' });
-        }
-        group.members.push(studentId);
-        await group.save();
+        const {groupId, studentId} = req.params;
+        const group = await GroupService.addStudentToGroup(groupId, studentId);
         res.status(200).json(group);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({message: error.message});
     }
 }

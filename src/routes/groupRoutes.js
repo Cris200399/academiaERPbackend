@@ -1,6 +1,6 @@
 const express = require('express');
 
-const {createGroup, getGroups, updateGroup, addStudentToGroup} = require('../controllers/groupController');
+const {createGroup, getGroups, updateGroup, addStudentToGroup, deleteGroup} = require('../controllers/groupController');
 
 const router = express.Router();
 
@@ -27,9 +27,30 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Group'
  */
-
 router.get('/', getGroups);
 
+/**
+ * @swagger
+ * /api/groups/{id}:
+ *   delete:
+ *     summary: Delete a group
+ *     tags: [Groups]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The group ID
+ *     responses:
+ *       204:
+ *         description: Group deleted successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Group not found
+ */
+router.delete('/:id', deleteGroup);
 
 /**
  * @swagger
