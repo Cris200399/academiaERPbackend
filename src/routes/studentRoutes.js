@@ -1,6 +1,12 @@
 const express = require('express');
 
-const {createStudent, getStudents, updateStudent, deleteStudent, getTotalStudents} = require('../controllers/studentController');
+const {
+    createStudent,
+    getStudents,
+    updateStudent,
+    deleteStudent,
+    getTotalStudents
+} = require('../controllers/studentController');
 
 const router = express.Router();
 
@@ -33,23 +39,68 @@ router.get('/', getStudents);
  * @swagger
  * /api/students:
  *   post:
- *     summary: Create a new student
- *     tags: [Students]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Student'
- *     responses:
- *       201:
- *         description: Student created successfully
+ *       summary: Create a new student
+ *       tags:
+ *         - Students
+ *       requestBody:
+ *         required: true
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Student'
- *       400:
- *         description: Bad request
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   description: Name of the student
+ *                 lastName:
+ *                   type: string
+ *                   description: Last name of the student
+ *                 address:
+ *                   type: string
+ *                   description: Address of the student
+ *                 gender:
+ *                   type: string
+ *                   description: Gender of the student
+ *                 dateOfBirth:
+ *                   type: string
+ *                   format: date
+ *                   description: Date of birth of the student
+ *                 email:
+ *                   type: string
+ *                   description: Email of the student
+ *                 phone:
+ *                   type: string
+ *                   description: Phone number of the student
+ *                 group:
+ *                   type: string
+ *                   description: Reference to the group the student belongs to
+ *                 dni:
+ *                   type: string
+ *                   description: National Identity Document of the student
+ *                 guardianData:
+ *                   type: object
+ *                   description: Guardian data if the student is underage
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       description: Name of the guardian
+ *                     phone:
+ *                       type: string
+ *                       description: Phone number of the guardian
+ *                     relationship:
+ *                       type: string
+ *                       description: Relationship of the guardian to the student
+ *       responses:
+ *         '200':
+ *           description: Student created successfully
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Student'
+ *         '400':
+ *           description: Bad request
+ *         '500':
+ *           description: Internal server error
  */
 router.post('/', createStudent);
 
@@ -127,7 +178,6 @@ router.delete('/:id', deleteStudent);
  *         description: Bad request
  */
 router.get('/total', getTotalStudents);
-
 
 
 module.exports = router;

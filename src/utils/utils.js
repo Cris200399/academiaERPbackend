@@ -3,4 +3,11 @@ const formatDate = (dateString) => {
     return `${year}-${month}-${day}`;
 };
 
-module.exports = { formatDate };
+const getAge = (dateFormated) => {
+    dateFormated = new Date(dateFormated);
+    const diffMs = Date.now() - dateFormated.getTime();
+    const ageDate = new Date(diffMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+module.exports = {formatDate, getAge};

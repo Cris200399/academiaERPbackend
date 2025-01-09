@@ -1,12 +1,43 @@
 const Student = require('../models/student');
 const Group = require('../models/group');
+const Guardian = require('../models/guardian');
 
-const { formatDate } = require('../utils/utils.js');
+const {formatDate} = require('../utils/utils.js');
+const {getAge} = require("../utils/utils");
 
 exports.createStudent = async (studentData) => {
-    const {name, lastName, address, gender, dateOfBirth, email, phone, group, dni} = studentData;
-    const student = new Student({name, lastName, address, gender, dateOfBirth, email, phone, group, dni});
-    student.dateOfBirth = formatDate(dateOfBirth);
+    const {name, lastName, address, gender, dateOfBirth, email, phone, group, dni, guardianData} = studentData;
+    let student;
+    if (getAge(dateOfBirth) < 18) {
+        const guardian = new Guardian(guardianData);
+        await guardian.save();
+
+        student = new Student({
+            name,
+            lastName,
+            address,
+            gender,
+            dateOfBirth,
+            email,
+            phone,
+            group,
+            dni,
+            guardian: guardian._id
+        });
+    } else {
+        const student = new Student({
+            name,
+            lastName,
+            address,
+            gender,
+            dateOfBirth,
+            email,
+            phone,
+            group,
+            dni
+        });
+
+    }
     await student.save();
     if (group) {
         const groupDoc = await Group.findById(group);
@@ -17,7 +48,7 @@ exports.createStudent = async (studentData) => {
         }
     }
     return student;
-}
+};
 
 exports.getStudents = async (query) => {
     return Student.find(query).populate('group');

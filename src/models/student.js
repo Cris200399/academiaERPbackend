@@ -16,45 +16,37 @@ const mongoose = require('mongoose');
  *         - phone
  *         - dni
  *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the student
  *         name:
  *           type: string
- *           description: The first name of the student
+ *           description: Nombre del estudiante
  *         lastName:
  *           type: string
- *           description: The last name of the student
+ *           description: Apellido del estudiante
  *         address:
  *           type: string
- *           description: The address of the student
+ *           description: Dirección del estudiante
  *         gender:
  *           type: string
- *           description: The gender of the student
+ *           description: Género del estudiante
  *         dateOfBirth:
  *           type: string
  *           format: date
- *           description: The date of birth of the student
+ *           description: Fecha de nacimiento del estudiante
  *         email:
  *           type: string
- *           description: The email of the student
+ *           description: Correo electrónico del estudiante
  *         phone:
  *           type: string
- *           description: The phone number of the student
+ *           description: Teléfono del estudiante
  *         group:
  *           type: string
- *           description: The group id the student belongs to
+ *           description: Referencia al grupo al que pertenece el estudiante
  *         dni:
  *           type: string
- *           description: The DNI of the student
- *         createdAt:
+ *           description: Documento Nacional de Identidad del estudiante
+ *         guardian:
  *           type: string
- *           format: date-time
- *           description: The date the student was created
- *         updatedAt:
- *           type: string
- *           format: date-time
- *           description: The date the student was last updated
+ *           description: Referencia al tutor del estudiante (se agrega si el estudiante es menor de edad)
  */
 const studentSchema = new mongoose.Schema({
     name: {
@@ -94,6 +86,10 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: [true, 'DNI is required'],
         unique: true
+    },
+    guardian: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Guardian',
     }
 }, {timestamps: true});
 
