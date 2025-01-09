@@ -25,7 +25,7 @@ exports.createStudent = async (studentData) => {
             guardian: guardian._id
         });
     } else {
-        const student = new Student({
+        student = new Student({
             name,
             lastName,
             address,
