@@ -88,7 +88,7 @@ exports.updateStudent = async (id, studentData) => {
         }
     }
 
-    return student;
+    return student.populate('group');
 }
 
 exports.deleteStudent = async (id) => {

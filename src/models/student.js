@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const {genderOptions} = require("../constants/genderOptions");
 
 /**
  * @swagger
@@ -64,6 +65,7 @@ const studentSchema = new mongoose.Schema({
     gender: {
         type: String,
         required: [true, 'Gender is required'],
+        enum: genderOptions,
     },
     dateOfBirth: {
         type: Date,
