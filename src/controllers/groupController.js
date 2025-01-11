@@ -12,7 +12,7 @@ exports.createGroup = async (req, res) => {
 
 exports.deleteGroup = async (req, res) => {
     try {
-        await Group.findByIdAndDelete(req.params.id);
+        await GroupService.deleteGroup(req.params.id);
         res.status(204).send();
     } catch (error) {
         res.status(400).json({message: error.message});

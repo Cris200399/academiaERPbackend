@@ -1,4 +1,5 @@
 const Group = require('../models/group');
+const Payment = require("../models/payment");
 
 exports.createGroup = async (groupData) => {
 
@@ -38,4 +39,17 @@ exports.addStudentToGroup = async (groupId, studentId) => {
     group.members.push(studentId);
     await group.save();
     return group;
+}
+
+exports.deleteGroup = async (groupId) => {
+    const existGroup = await Group.findById(groupId);
+    if (!existGroup) {
+        throw new Error('Group not found');
+    }
+
+    if (existGroup.members.length > 0) {
+        throw new Error('Group has members');
+    }
+
+    await Group.deleteOne({_id: groupId});
 }

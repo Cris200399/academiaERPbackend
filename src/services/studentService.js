@@ -51,47 +51,63 @@ exports.createStudent = async (studentData) => {
 };
 
 exports.getStudents = async (query) => {
-    return Student.find(query).populate('group');
+    return Student.find(query).populate('group').populate('guardian');
 }
 
 exports.updateStudent = async (id, studentData) => {
-    const student = await Student.findById(id);
-    if (!student) {
+    const existStudent = await Student.findById(id);
+    if (!existStudent) {
         throw new Error('Student not found');
     }
-
-
-    const oldGroupId = student.group;
-    const newGroupId = studentData.group;
-
     studentData.dateOfBirth = formatDate(studentData.dateOfBirth);
 
-    // Update student data
-    Object.assign(student, studentData);
-    await student.save();
 
-    // If the group has changed, update the groups
-    if (oldGroupId && oldGroupId.toString() !== newGroupId) {
-        const oldGroup = await Group.findById(oldGroupId);
-        if (oldGroup) {
-            oldGroup.members.pull(student._id);
-            await oldGroup.save();
-        }
-    }
+    const oldGroupId = existStudent.group;
+    const newGroupId = studentData.group;
+
+
+    const newGroup = await Group.findById(newGroupId);
+    const oldGroup = await Group.findById(oldGroupId);
 
     if (newGroupId && oldGroupId.toString() !== newGroupId) {
-        const newGroup = await Group.findById(newGroupId);
         if (newGroup) {
-            newGroup.members.push(student._id);
+            newGroup.members.push(existStudent._id);
             await newGroup.save();
-            student.group = newGroupId;
+            if (oldGroup) {
+                oldGroup.members = oldGroup.members.filter(member => member.toString() !== existStudent._id.toString());
+                await oldGroup.save();
+            }
+            existStudent.group = newGroupId;
+        } else {
+            throw new Error('Group not found');
         }
     }
 
-    return student.populate('group');
+    if (getAge(studentData.dateOfBirth) < 18) {
+        const existGuardian = await Guardian.findById(existStudent.guardian._id);
+        if (existGuardian) {
+            await existGuardian.updateOne(studentData.guardian);
+            studentData.guardian = existGuardian._id;
+        } else {
+            const guardian = new Guardian(studentData.guardian);
+            await guardian.save();
+            studentData.guardian = guardian._id;
+        }
+    }
+
+    await existStudent.updateOne(studentData);
+
+
+    return await Student.findById(existStudent._id).populate('guardian').populate('group');
 }
 
+
 exports.deleteStudent = async (id) => {
+    const existGroup = await Group.findOne({members: id});
+    if (existGroup) {
+        existGroup.members = existGroup.members.filter(member => member.toString() !== id);
+        await existGroup.save();
+    }
     await Student.findByIdAndDelete(id);
 }
 

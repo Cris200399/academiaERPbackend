@@ -79,6 +79,7 @@ const studentSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: [true, 'Phone is required'],
+        unique: true,
     },
     group: {
         type: mongoose.Schema.Types.ObjectId,
@@ -92,8 +93,14 @@ const studentSchema = new mongoose.Schema({
     guardian: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Guardian',
-    }
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['up-to-date', 'overdue', 'no-payment'], // Estado del pago.
+        default: 'no-payment',
+    },
 }, {timestamps: true});
+
 
 const Student = mongoose.model('Student', studentSchema);
 module.exports = Student;
