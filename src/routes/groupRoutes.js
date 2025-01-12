@@ -1,6 +1,6 @@
 const express = require('express');
 
-const {createGroup, getGroups, updateGroup, addStudentToGroup, deleteGroup} = require('../controllers/groupController');
+const {createGroup, getGroups, updateGroup, addStudentToGroup, deleteGroup, updateGroupInfo} = require('../controllers/groupController');
 
 const router = express.Router();
 
@@ -141,5 +141,38 @@ router.put('/:id', updateGroup);
  *         description: Group not found
  */
 router.post('/:groupId/students/:studentId', addStudentToGroup);
+
+/**
+ * @swagger
+ * /api/groups/{id}/info:
+ *   put:
+ *     summary: Update group information
+ *     tags: [Groups]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The group ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Group'
+ *     responses:
+ *       200:
+ *         description: Group information updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Group'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Group not found
+ */
+router.put('/:id/info', updateGroupInfo);
 
 module.exports = router;

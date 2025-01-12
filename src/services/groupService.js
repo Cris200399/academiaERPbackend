@@ -53,3 +53,21 @@ exports.deleteGroup = async (groupId) => {
 
     await Group.deleteOne({_id: groupId});
 }
+
+
+exports.updateGroupInfo = async (groupId, groupData) => {
+    const existGroup = await Group.findById(groupId);
+    if (!existGroup) {
+        throw new Error('Group not found');
+    }
+    const{name, description, daysOfWeek, schedule, maxMembers} = groupData;
+    existGroup.name = name;
+    existGroup.description = description;
+    existGroup.daysOfWeek = daysOfWeek;
+    existGroup.schedule = schedule;
+    existGroup.maxMembers = maxMembers;
+    await existGroup.save();
+    return existGroup;
+
+
+}

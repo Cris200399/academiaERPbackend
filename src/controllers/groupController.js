@@ -21,7 +21,7 @@ exports.deleteGroup = async (req, res) => {
 
 exports.getGroups = async (req, res) => {
     try {
-        const groups = await Group.find(req.query).populate('members');
+        const groups = await Group.find(req.query);
         res.status(200).json(groups);
     } catch (error) {
         res.status(400).json({message: error.message});
@@ -41,6 +41,15 @@ exports.addStudentToGroup = async (req, res) => {
     try {
         const {groupId, studentId} = req.params;
         const group = await GroupService.addStudentToGroup(groupId, studentId);
+        res.status(200).json(group);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
+exports.updateGroupInfo = async (req, res) => {
+    try {
+        const group = await GroupService.updateGroupInfo(req.params.id, req.body);
         res.status(200).json(group);
     } catch (error) {
         res.status(400).json({message: error.message});
