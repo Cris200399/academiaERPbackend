@@ -99,6 +99,11 @@ const studentSchema = new mongoose.Schema({
         enum: ['up-to-date', 'overdue', 'no-payment'], // Estado del pago.
         default: 'no-payment',
     },
+    profileImageId: { // Referencia al archivo de imagen en GridFS
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'uploads'
+    },
+
 }, {timestamps: true});
 
 

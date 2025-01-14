@@ -1,14 +1,21 @@
 const express = require('express');
+const multer = require('multer');
 
 const {
     createStudent,
     getStudents,
     updateStudent,
     deleteStudent,
-    getTotalStudents
+    getTotalStudents,
+    getProfileImage,
+    updateProfileImage
 } = require('../controllers/studentController');
 
+
 const router = express.Router();
+
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 
 /**
  * @swagger
@@ -178,6 +185,77 @@ router.delete('/:id', deleteStudent);
  *         description: Bad request
  */
 router.get('/total', getTotalStudents);
+
+
+/**
+ * @swagger
+ * /api/students/{studentId}/profile-image:
+ *   put:
+ *     summary: Update the profile image of a student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: The profile image file
+ *     responses:
+ *       200:
+ *         description: Profile image updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Student'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
+router.put('/:studentId/profile-image', upload.single('image'), updateProfileImage);
+
+/**
+ * @swagger
+ * /api/students/{studentId}/profile-image:
+ *   get:
+ *     summary: Get the profile image of a student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
+ *     responses:
+ *       200:
+ *         description: Profile image retrieved successfully
+ *         content:
+ *           image/jpeg:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/:studentId/profile-image', getProfileImage);
 
 
 module.exports = router;

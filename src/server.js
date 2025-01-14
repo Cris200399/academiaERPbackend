@@ -3,7 +3,7 @@ const app = require('./app');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const connectDB = require('./config/database');
+const {connectDB} = require('./config/database');
 const swaggerDocs = require('./swagger');
 
 
@@ -18,7 +18,6 @@ if (!mongoUri) {
 const PORT = process.env.PORT || 5000;
 
 connectDB();
-
 // Configurar Swagger
 swaggerDocs(app);
 

@@ -1,4 +1,8 @@
 const mongoose = require('mongoose');
+const {GridFSBucket} = require("mongodb");
+
+
+let gridfsBucket = null;
 
 const connectDB = async () => {
     try {
@@ -6,6 +10,11 @@ const connectDB = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
+
+        gridfsBucket = await new GridFSBucket(mongoose.connection.db, {
+            bucketName: 'uploads'
+        });
+
         console.log('MongoDB conectado');
     } catch (err) {
         console.error(`Error: ${err.message}`);
@@ -13,4 +22,11 @@ const connectDB = async () => {
     }
 };
 
-module.exports = connectDB;
+const getGridFSBucket = () => {
+    if (!gridfsBucket) {
+        throw new Error('GridFS no está inicializado');
+    }
+    return gridfsBucket;
+};
+
+module.exports = {connectDB, getGridFSBucket};

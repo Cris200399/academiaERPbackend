@@ -5,6 +5,8 @@ const Guardian = require('../models/guardian');
 const {formatDate} = require('../utils/utils.js');
 const {getAge} = require("../utils/utils");
 
+const gridFSService = require('../services/gridfsService');
+
 exports.createStudent = async (studentData) => {
     const {name, lastName, address, gender, dateOfBirth, email, phone, group, dni, guardianData} = studentData;
     let student;
@@ -98,9 +100,8 @@ exports.updateStudent = async (id, studentData) => {
     await existStudent.updateOne(studentData);
 
 
-    return await Student.findById(existStudent._id).populate('guardian').populate('group');
+    return Student.findById(existStudent._id).populate('guardian').populate('group');
 }
-
 
 exports.deleteStudent = async (id) => {
     const existGroup = await Group.findOne({members: id});
@@ -113,4 +114,28 @@ exports.deleteStudent = async (id) => {
 
 exports.getTotalStudents = async () => {
     return Student.countDocuments();
+}
+
+exports.updateProfileImage = async (id, imageFile) => {
+    try {
+        const student = await Student.findById(id);
+
+        if (!student) {
+            throw new Error('Estudiante no encontrado');
+        }
+
+        // Eliminar imagen anterior si existe
+        if (student.profileImageId) {
+            await gridFSService.deleteFile(student.profileImageId);
+        }
+
+        // Subir nueva imagen
+        const fileId = await gridFSService.uploadFile(imageFile);
+
+        // Actualizar referencia en el estudiante
+        student.profileImageId = fileId;
+        return await student.save();
+    } catch (error) {
+        throw new Error('Error al actualizar la imagen de perfil: ' + error.message);
+    }
 }
