@@ -8,11 +8,11 @@ const {getAge} = require("../utils/utils");
 const gridFSService = require('../services/gridfsService');
 
 exports.createStudent = async (studentData) => {
-    const {name, lastName, address, gender, dateOfBirth, email, phone, group, dni, guardianData} = studentData;
+    const {name, lastName, address, gender, dateOfBirth, email, phone, group, dni, guardian} = studentData;
     let student;
     if (getAge(dateOfBirth) < 18) {
-        const guardian = new Guardian(guardianData);
-        await guardian.save();
+        const newGuardian = new Guardian(guardian);
+        await newGuardian.save();
 
         student = new Student({
             name,
@@ -24,7 +24,7 @@ exports.createStudent = async (studentData) => {
             phone,
             group,
             dni,
-            guardian: guardian._id
+            guardian: newGuardian._id
         });
     } else {
         student = new Student({
@@ -97,8 +97,11 @@ exports.updateStudent = async (id, studentData) => {
         }
     }
 
-    await existStudent.updateOne(studentData);
+    if (existStudent.profileImageId) {
+        studentData.profileImageId = existStudent.profileImageId;
+    }
 
+    await existStudent.updateOne(studentData);
 
     return Student.findById(existStudent._id).populate('guardian').populate('group');
 }
@@ -109,7 +112,10 @@ exports.deleteStudent = async (id) => {
         existGroup.members = existGroup.members.filter(member => member.toString() !== id);
         await existGroup.save();
     }
-    await Student.findByIdAndDelete(id);
+    const student = await Student.findByIdAndDelete(id);
+    if (student && student.profileImageId) {
+        await gridFSService.deleteFile(student.profileImageId);
+    }
 }
 
 exports.getTotalStudents = async () => {
@@ -118,7 +124,7 @@ exports.getTotalStudents = async () => {
 
 exports.updateProfileImage = async (id, imageFile) => {
     try {
-        const student = await Student.findById(id);
+        const student = await Student.findById({});
 
         if (!student) {
             throw new Error('Estudiante no encontrado');
@@ -130,10 +136,8 @@ exports.updateProfileImage = async (id, imageFile) => {
         }
 
         // Subir nueva imagen
-        const fileId = await gridFSService.uploadFile(imageFile);
-
         // Actualizar referencia en el estudiante
-        student.profileImageId = fileId;
+        student.profileImageId = await gridFSService.uploadFile(imageFile);
         return await student.save();
     } catch (error) {
         throw new Error('Error al actualizar la imagen de perfil: ' + error.message);

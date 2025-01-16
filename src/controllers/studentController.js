@@ -53,7 +53,7 @@ exports.updateProfileImage = async (req, res) => {
         if (!req.file) {
             return res.status(400).json({message: 'No se proporcionó ninguna imagen'});
         }
-        const studentUpdated = await StudentService.updateProfileImage(req.params.studentId, req.file)
+        const studentUpdated = await StudentService.updateProfileImage(req.params.studentId, req.file);
         res.status(200).json({message: 'Profile image updated', studentUpdated});
     } catch (error) {
         console.error(error);
