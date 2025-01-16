@@ -1,32 +1,147 @@
 const Group = require('../models/group');
-const Payment = require("../models/payment");
+const moment = require('moment');
 
 exports.createGroup = async (groupData) => {
-
     const {name, description, daysOfWeek, schedule, maxMembers} = groupData;
-    const group = new Group({name, description, daysOfWeek, schedule, maxMembers});
 
-    // If groupName exists, throw an error
-    const groupNameExists = await Group.find({name: name});
-    if (groupNameExists.length > 0) {
+    // Parsear las horas del rango de horario y guardarlas en minutos desde medianoche
+    // para hacer más fácil la comparación
+    const [startStr, endStr] = schedule.split(' - ');
+    const startTime = moment(startStr, 'HH:mm');
+    const endTime = moment(endStr, 'HH:mm');
+
+    if (!startTime.isValid() || !endTime.isValid() || endTime.isSameOrBefore(startTime)) {
+        throw new Error('Invalid schedule format or time range');
+    }
+
+    // Convertir las horas a minutos desde medianoche
+    const startMinutes = startTime.hours() * 60 + startTime.minutes();
+    const endMinutes = endTime.hours() * 60 + endTime.minutes();
+
+    // Verificar si ya existe un grupo con el mismo nombre
+    const groupNameExists = await Group.findOne({name: name});
+    if (groupNameExists) {
         throw new Error('Group name already exists');
     }
 
+    // Buscar grupos que tengan al menos un día en común
+    const groupsWithCommonDays = await Group.find({
+        daysOfWeek: {$in: daysOfWeek}
+    });
+
+    // Verificar cruces de horario para cada grupo encontrado
+    for (const group of groupsWithCommonDays) {
+        // Obtener los días en común entre el grupo existente y el nuevo
+        const commonDays = group.daysOfWeek.filter(day => daysOfWeek.includes(day));
+
+        if (commonDays.length === 0) continue;
+
+        // Convertir el horario del grupo existente a minutos
+        const [existingStartStr, existingEndStr] = group.schedule.split(' - ');
+        const existingStart = moment(existingStartStr, 'HH:mm');
+        const existingEnd = moment(existingEndStr, 'HH:mm');
+
+        const existingStartMinutes = existingStart.hours() * 60 + existingStart.minutes();
+        const existingEndMinutes = existingEnd.hours() * 60 + existingEnd.minutes();
+
+        // Verificar si hay superposición de horarios
+        const hasOverlap = !(endMinutes <= existingStartMinutes || startMinutes >= existingEndMinutes);
+
+        if (hasOverlap) {
+            throw new Error(`Schedule conflicts with group "${group.name}" on ${commonDays.join(', ')}`);
+        }
+    }
+
+    // Crear el grupo si no hay conflicto
+    const group = new Group({
+        name,
+        description,
+        daysOfWeek,
+        schedule,
+        maxMembers,
+    });
+
     await group.save();
     return group;
+};
 
-}
+exports.updateGroup = async (groupId, updatedData) => {
+    const {name, description, daysOfWeek, schedule, maxMembers} = updatedData;
 
-exports.updateGroup = async (id, groupData) => {
-    const group = await Group.findById(id);
-    if (!group) {
+    // Buscar el grupo existente
+    const existingGroup = await Group.findById(groupId);
+    if (!existingGroup) {
         throw new Error('Group not found');
     }
 
-    Object.assign(group, groupData);
-    await group.save();
-    return group;
-}
+    // Si se proporciona un nuevo nombre, verificar que no exista otro grupo con ese nombre
+    if (name && name !== existingGroup.name) {
+        const groupNameExists = await Group.findOne({name: name, _id: {$ne: groupId}});
+        if (groupNameExists) {
+            throw new Error('Another group with the same name already exists');
+        }
+    }
+
+    // Verificar cruces de horario solo si se modifica el horario o los días
+    if (schedule || daysOfWeek) {
+        // Usar los valores nuevos o los existentes según corresponda
+        const newSchedule = schedule || existingGroup.schedule;
+        const newDaysOfWeek = daysOfWeek || existingGroup.daysOfWeek;
+
+        // Parsear las horas del rango de horario y convertirlas a minutos
+        const [startStr, endStr] = newSchedule.split(' - ');
+        const startTime = moment(startStr, 'HH:mm');
+        const endTime = moment(endStr, 'HH:mm');
+
+        if (!startTime.isValid() || !endTime.isValid() || endTime.isSameOrBefore(startTime)) {
+            throw new Error('Invalid schedule format or time range');
+        }
+
+        // Convertir las horas a minutos desde medianoche
+        const startMinutes = startTime.hours() * 60 + startTime.minutes();
+        const endMinutes = endTime.hours() * 60 + endTime.minutes();
+
+        // Buscar grupos que tengan al menos un día en común, excluyendo el grupo actual
+        const groupsWithCommonDays = await Group.find({
+            _id: {$ne: groupId},
+            daysOfWeek: {$in: newDaysOfWeek}
+        });
+
+        // Verificar cruces de horario para cada grupo encontrado
+        for (const group of groupsWithCommonDays) {
+            // Obtener los días en común entre el grupo existente y el actualizado
+            const commonDays = group.daysOfWeek.filter(day => newDaysOfWeek.includes(day));
+
+            if (commonDays.length === 0) continue;
+
+            // Convertir el horario del grupo existente a minutos
+            const [existingStartStr, existingEndStr] = group.schedule.split(' - ');
+            const existingStart = moment(existingStartStr, 'HH:mm');
+            const existingEnd = moment(existingEndStr, 'HH:mm');
+
+            const existingStartMinutes = existingStart.hours() * 60 + existingStart.minutes();
+            const existingEndMinutes = existingEnd.hours() * 60 + existingEnd.minutes();
+
+            // Verificar si hay superposición de horarios
+            const hasOverlap = !(endMinutes <= existingStartMinutes || startMinutes >= existingEndMinutes);
+
+            if (hasOverlap) {
+                throw new Error(`Schedule conflicts with group "${group.name}" on ${commonDays.join(', ')}`);
+            }
+        }
+    }
+
+    // Actualizar los campos proporcionados
+    if (name) existingGroup.name = name;
+    if (description) existingGroup.description = description;
+    if (daysOfWeek) existingGroup.daysOfWeek = daysOfWeek;
+    if (schedule) existingGroup.schedule = schedule;
+    if (maxMembers !== undefined) existingGroup.maxMembers = maxMembers;
+
+    // Guardar los cambios
+    await existingGroup.save();
+    return existingGroup;
+};
 
 exports.addStudentToGroup = async (groupId, studentId) => {
     const group = await Group.findById(groupId);
@@ -60,7 +175,7 @@ exports.updateGroupInfo = async (groupId, groupData) => {
     if (!existGroup) {
         throw new Error('Group not found');
     }
-    const{name, description, daysOfWeek, schedule, maxMembers} = groupData;
+    const {name, description, daysOfWeek, schedule, maxMembers} = groupData;
     existGroup.name = name;
     existGroup.description = description;
     existGroup.daysOfWeek = daysOfWeek;

@@ -68,13 +68,55 @@ exports.getProfileImage = async (req, res) => {
             return res.status(404).json({message: 'Imagen no encontrada'});
         }
 
-        const file = await gridFSService.getFile(student.profileImageId);
+        const file = await gridFSService.getImageFile(student.profileImageId);
         if (!file) {
             return res.status(404).json({message: 'Archivo no encontrado'});
         }
 
         res.set('Content-Type', file.contentType);
-        const downloadStream = gridFSService.getDownloadStream(student.profileImageId);
+        const downloadStream = gridFSService.getImageDownloadStream(student.profileImageId);
+        downloadStream.pipe(res);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
+
+exports.updateDocumentFile = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({message: 'No se proporcionó ningún archivo'});
+        }
+
+        if (req.file.mimetype !== 'application/pdf') {
+            return res.status(400).json({message: 'El archivo debe ser un PDF'});
+        }
+
+        const studentUpdated = await StudentService.updateDocumentFile(req.params.studentId, req.file);
+        res.status(200).json({message: 'Archivo actualizado', studentUpdated});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Error actualizando archivo'});
+    }
+}
+
+exports.getDocumentFile = async (req, res) => {
+    try {
+        const student = await Student.findById(req.params.studentId);
+        if (!student || !student.documentId) {
+            return res.status(404).json({message: 'Documento no encontrado'});
+        }
+
+        const file = await gridFSService.getDocumentFile(student.documentId);
+        if (!file) {
+            return res.status(404).json({message: 'Archivo no encontrado'});
+        }
+
+        res.set({
+            'Content-Type': file.contentType,
+            'Content-Disposition': `inline; filename="${file.metadata.originalName}"`,
+        });
+
+        const downloadStream = gridFSService.getDocumentDownloadStream(student.documentId);
         downloadStream.pipe(res);
     } catch (error) {
         res.status(500).json({message: error.message});

@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const {GridFSBucket} = require("mongodb");
 
 
-let gridfsBucket = null;
+let gridfsBucketImages = null;
+let gridfsBucketDocuments = null;
 
 const connectDB = async () => {
     try {
@@ -11,8 +12,12 @@ const connectDB = async () => {
             useUnifiedTopology: true,
         });
 
-        gridfsBucket = await new GridFSBucket(mongoose.connection.db, {
-            bucketName: 'uploads'
+        gridfsBucketImages = await new GridFSBucket(mongoose.connection.db, {
+            bucketName: 'images'
+        });
+
+        gridfsBucketDocuments = await new GridFSBucket(mongoose.connection.db, {
+            bucketName: 'documents'
         });
 
         console.log('MongoDB conectado');
@@ -22,11 +27,18 @@ const connectDB = async () => {
     }
 };
 
-const getGridFSBucket = () => {
-    if (!gridfsBucket) {
+const getGridFSBucketImages = () => {
+    if (!gridfsBucketImages) {
         throw new Error('GridFS no está inicializado');
     }
-    return gridfsBucket;
+    return gridfsBucketImages;
 };
 
-module.exports = {connectDB, getGridFSBucket};
+const getGridFSBucketDocuments = () => {
+    if (!gridfsBucketDocuments) {
+        throw new Error('GridFS no está inicializado');
+    }
+    return gridfsBucketDocuments;
+};
+
+module.exports = {connectDB, getGridFSBucketImages, getGridFSBucketDocuments};

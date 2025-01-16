@@ -114,7 +114,10 @@ exports.deleteStudent = async (id) => {
     }
     const student = await Student.findByIdAndDelete(id);
     if (student && student.profileImageId) {
-        await gridFSService.deleteFile(student.profileImageId);
+        await gridFSService.deleteImageFile(student.profileImageId);
+    }
+    if (student && student.documentId) {
+        await gridFSService.deleteDocumentFile(student.documentId);
     }
 }
 
@@ -124,7 +127,7 @@ exports.getTotalStudents = async () => {
 
 exports.updateProfileImage = async (id, imageFile) => {
     try {
-        const student = await Student.findById({});
+        const student = await Student.findById(id);
 
         if (!student) {
             throw new Error('Estudiante no encontrado');
@@ -132,14 +135,38 @@ exports.updateProfileImage = async (id, imageFile) => {
 
         // Eliminar imagen anterior si existe
         if (student.profileImageId) {
-            await gridFSService.deleteFile(student.profileImageId);
+            await gridFSService.deleteImageFile(student.profileImageId);
         }
 
         // Subir nueva imagen
         // Actualizar referencia en el estudiante
-        student.profileImageId = await gridFSService.uploadFile(imageFile);
+        student.profileImageId = await gridFSService.uploadImageFile(imageFile);
         return await student.save();
     } catch (error) {
         throw new Error('Error al actualizar la imagen de perfil: ' + error.message);
+    }
+}
+
+exports.updateDocumentFile = async (id, documentFile) => {
+    try {
+
+        const student = await Student.findById(id);
+        if (!student) {
+            throw new Error('Estudiante no encontrado');
+        }
+
+        // Eliminar documento anterior si existe
+        if (student.documentId) {
+            await gridFSService.deleteDocumentFile(student.documentId);
+        }
+
+        // Subir nuevo documento
+        const fileId = await gridFSService.uploadDocumentFile(documentFile);
+        student.documentId = fileId;
+        await student.save();
+
+        return student;
+    } catch (error) {
+        throw new Error('Error al actualizar el documento: ' + error.message);
     }
 }

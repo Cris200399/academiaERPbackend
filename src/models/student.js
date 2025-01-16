@@ -103,7 +103,9 @@ const studentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'uploads'
     },
-
+    documentId: {
+        type: mongoose.Schema.Types.ObjectId
+    }
 }, {timestamps: true});
 
 

@@ -8,14 +8,26 @@ const {
     deleteStudent,
     getTotalStudents,
     getProfileImage,
-    updateProfileImage
+    updateProfileImage,
+    updateDocumentFile,
+    getDocumentFile
 } = require('../controllers/studentController');
 
 
 const router = express.Router();
 
 const storage = multer.memoryStorage();
-const upload = multer({storage: storage});
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf' ||
+            file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Formato de archivo no soportado'));
+        }
+    }
+});
 
 /**
  * @swagger
@@ -256,6 +268,76 @@ router.put('/:studentId/profile-image', upload.single('image'), updateProfileIma
  *         description: Internal server error
  */
 router.get('/:studentId/profile-image', getProfileImage);
+
+/**
+ * @swagger
+ * /api/students/{studentId}/document:
+ *   put:
+ *     summary: Update a document file of a student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               document:
+ *                 type: string
+ *                 format: binary
+ *                 description: The document file
+ *     responses:
+ *       200:
+ *         description: Document file updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Student'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
+router.put('/:studentId/document', upload.single('document'), updateDocumentFile);
+
+/**
+ * @swagger
+ * /api/students/{studentId}/document:
+ *   get:
+ *     summary: Get a document file of a student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
+ *     responses:
+ *       200:
+ *         description: Document file retrieved successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/:studentId/document', getDocumentFile);
 
 
 module.exports = router;
