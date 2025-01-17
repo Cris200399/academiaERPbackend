@@ -43,11 +43,15 @@ exports.createStudent = async (studentData) => {
     await student.save();
     if (group) {
         const groupDoc = await Group.findById(group);
-        if (groupDoc) {
+        if (groupDoc && groupDoc.members.length < groupDoc.maxMembers) {
             groupDoc.members.push(student._id);
             await groupDoc.save();
             student.group = groupDoc;
+        } else {
+            throw new Error('Group not found or group is full');
         }
+    } else {
+        throw new Error('Group not found');
     }
     return student;
 };
@@ -72,7 +76,7 @@ exports.updateStudent = async (id, studentData) => {
     const oldGroup = await Group.findById(oldGroupId);
 
     if (newGroupId && oldGroupId.toString() !== newGroupId) {
-        if (newGroup) {
+        if (newGroup && newGroup.members.length < newGroup.maxMembers) {
             newGroup.members.push(existStudent._id);
             await newGroup.save();
             if (oldGroup) {
@@ -81,7 +85,7 @@ exports.updateStudent = async (id, studentData) => {
             }
             existStudent.group = newGroupId;
         } else {
-            throw new Error('Group not found');
+            throw new Error('Group not found or group is full');
         }
     }
 
