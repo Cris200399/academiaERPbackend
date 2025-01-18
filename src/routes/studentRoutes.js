@@ -10,7 +10,9 @@ const {
     getProfileImage,
     updateProfileImage,
     updateDocumentFile,
-    getDocumentFile
+    getDocumentFile,
+    deleteProfileImage,
+    getStudent
 } = require('../controllers/studentController');
 
 
@@ -125,6 +127,53 @@ router.post('/', createStudent);
 
 /**
  * @swagger
+ * /api/students/total:
+ *   get:
+ *     summary: Get the total number of students
+ *     tags: [Students]
+ *     responses:
+ *       200:
+ *         description: Total number of students
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: integer
+ *               example: 100
+ *       400:
+ *         description: Bad request
+ */
+router.get('/total', getTotalStudents);
+
+
+/**
+ * @swagger
+ * /api/students/{id}:
+ *   get:
+ *     summary: Retrieve a student by ID
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
+ *     responses:
+ *       200:
+ *         description: Student retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Student'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ */
+router.get('/:id', getStudent);
+
+/**
+ * @swagger
  * /api/students/{id}:
  *   put:
  *     summary: Update an existing student
@@ -178,25 +227,6 @@ router.put('/:id', updateStudent);
  *         description: Student not found
  */
 router.delete('/:id', deleteStudent);
-
-/**
- * @swagger
- * /api/students/total:
- *   get:
- *     summary: Get the total number of students
- *     tags: [Students]
- *     responses:
- *       200:
- *         description: Total number of students
- *         content:
- *           application/json:
- *             schema:
- *               type: integer
- *               example: 100
- *       400:
- *         description: Bad request
- */
-router.get('/total', getTotalStudents);
 
 
 /**
@@ -271,6 +301,36 @@ router.get('/:studentId/profile-image', getProfileImage);
 
 /**
  * @swagger
+ * /api/students/{studentId}/profile-image:
+ *   delete:
+ *     summary: Delete the profile image of a student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
+ *     responses:
+ *       200:
+ *         description: Profile image deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Student'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete('/:studentId/profile-image', deleteProfileImage);
+
+
+/**
+ * @swagger
  * /api/students/{studentId}/document:
  *   put:
  *     summary: Update a document file of a student
@@ -338,6 +398,7 @@ router.put('/:studentId/document', upload.single('document'), updateDocumentFile
  *         description: Internal server error
  */
 router.get('/:studentId/document', getDocumentFile);
+
 
 
 module.exports = router;

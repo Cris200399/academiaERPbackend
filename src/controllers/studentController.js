@@ -20,6 +20,15 @@ exports.getStudents = async (req, res) => {
     }
 }
 
+exports.getStudent = async (req, res) => {
+    try {
+        const student = await StudentService.getStudent(req.params.id);
+        res.status(200).json(student);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
 exports.getTotalStudents = async (req, res) => {
     try {
         const students = await StudentService.getTotalStudents();
@@ -123,3 +132,13 @@ exports.getDocumentFile = async (req, res) => {
     }
 }
 
+
+exports.deleteProfileImage = async (req, res) => {
+    try {
+        const studentUpdated = await StudentService.deleteProfileImage(req.params.studentId);
+        res.status(200).json({message: 'Profile image deleted', studentUpdated});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Error deleting profile image'});
+    }
+}

@@ -169,7 +169,6 @@ exports.deleteGroup = async (groupId) => {
     await Group.deleteOne({_id: groupId});
 }
 
-
 exports.updateGroupInfo = async (groupId, groupData) => {
     const existGroup = await Group.findById(groupId);
     if (!existGroup) {
@@ -185,4 +184,8 @@ exports.updateGroupInfo = async (groupId, groupData) => {
     return existGroup;
 
 
+}
+
+exports.getAvailableGroups = async () => {
+    return Group.find({$expr: {$lt: [{$size: "$members"}, "$maxMembers"]}});
 }

@@ -60,6 +60,10 @@ exports.getStudents = async (query) => {
     return Student.find(query).populate('group').populate('guardian');
 }
 
+exports.getStudent = async (id) => {
+    return Student.findById(id).populate('group').populate('guardian');
+}
+
 exports.updateStudent = async (id, studentData) => {
     const existStudent = await Student.findById(id);
     if (!existStudent) {
@@ -127,6 +131,24 @@ exports.deleteStudent = async (id) => {
 
 exports.getTotalStudents = async () => {
     return Student.countDocuments();
+}
+
+exports.deleteProfileImage = async (id) => {
+    try {
+        const student = await Student.findById(id);
+        if (!student) {
+            throw new Error('Estudiante no encontrado');
+        }
+        if (!student.profileImageId) {
+            throw new Error('No hay imagen de perfil');
+        }
+        await gridFSService.deleteImageFile(student.profileImageId);
+        student.profileImageId = undefined;
+        await student.save();
+        return student;
+    } catch (error) {
+        throw new Error('Error al eliminar la imagen de perfil: ' + error.message);
+    }
 }
 
 exports.updateProfileImage = async (id, imageFile) => {
