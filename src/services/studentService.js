@@ -69,8 +69,8 @@ exports.updateStudent = async (id, studentData) => {
     if (!existStudent) {
         throw new Error('Student not found');
     }
-    studentData.dateOfBirth = formatDate(studentData.dateOfBirth);
 
+    //studentData.dateOfBirth = formatDate(studentData.dateOfBirth);
 
     const oldGroupId = existStudent.group;
     const newGroupId = studentData.group;
@@ -107,6 +107,10 @@ exports.updateStudent = async (id, studentData) => {
 
     if (existStudent.profileImageId) {
         studentData.profileImageId = existStudent.profileImageId;
+    }
+
+    if (existStudent.documentId) {
+        studentData.documentId = existStudent.documentId;
     }
 
     await existStudent.updateOne(studentData);
