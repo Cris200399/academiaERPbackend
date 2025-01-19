@@ -1,5 +1,8 @@
 const Group = require('../models/group');
 const moment = require('moment');
+const diasSemana = require("../constants/weekDays");
+const {parseTimeRange} = require("../utils/utils");
+
 
 exports.createGroup = async (groupData) => {
     const {name, description, daysOfWeek, schedule, maxMembers} = groupData;
@@ -189,3 +192,30 @@ exports.updateGroupInfo = async (groupId, groupData) => {
 exports.getAvailableGroups = async () => {
     return Group.find({$expr: {$lt: [{$size: "$members"}, "$maxMembers"]}});
 }
+
+exports.getGroupInProgress = async () => {
+    const now = moment();
+    const currentDay = now.day();
+
+    // Primero obtenemos todos los grupos que coinciden con el día actual
+    const groups = await Group.find({
+        daysOfWeek: {
+            $in: [Object.keys(diasSemana).find(key => diasSemana[key] === currentDay)]
+        }
+    });
+
+    // Luego filtramos por horario en memoria
+    return groups.filter(group => {
+        const timeRange = parseTimeRange(group.schedule);
+        const currentHour = now.hours();
+        const currentMinute = now.minutes();
+
+        // Convertir a minutos para hacer la comparación más fácil
+        const currentTimeInMinutes = (currentHour * 60) + currentMinute;
+        const startTimeInMinutes = (timeRange.start.hours * 60) + timeRange.start.minutes;
+        const endTimeInMinutes = (timeRange.end.hours * 60) + timeRange.end.minutes;
+
+        return currentTimeInMinutes >= startTimeInMinutes &&
+            currentTimeInMinutes <= endTimeInMinutes;
+    });
+};

@@ -64,3 +64,12 @@ exports.getAvailableGroups = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.getGroupInProgress = async (req, res) => {
+    try {
+        const groups = await GroupService.getGroupInProgress();
+        res.status(200).json(groups);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

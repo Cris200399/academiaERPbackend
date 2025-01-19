@@ -8,6 +8,7 @@ const {
     deleteGroup,
     updateGroupInfo,
     getAvailableGroups,
+    getGroupInProgress
 } = require('../controllers/groupController');
 
 const router = express.Router();
@@ -39,29 +40,6 @@ router.get('/', getGroups);
 
 /**
  * @swagger
- * /api/groups/{id}:
- *   delete:
- *     summary: Delete a group
- *     tags: [Groups]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The group ID
- *     responses:
- *       204:
- *         description: Group deleted successfully
- *       400:
- *         description: Bad request
- *       404:
- *         description: Group not found
- */
-router.delete('/:id', deleteGroup);
-
-/**
- * @swagger
  * /api/groups:
  *   post:
  *     summary: Create a new group
@@ -83,6 +61,72 @@ router.delete('/:id', deleteGroup);
  *         description: Bad request
  */
 router.post('/', createGroup);
+
+
+/**
+ * @swagger
+ * /api/groups/available:
+ *   get:
+ *     summary: Retrieve a list of groups when there are available spots
+ *     tags: [Groups]
+ *     responses:
+ *       200:
+ *         description: A list of available groups
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Group'
+ *       400:
+ *         description: Bad request
+ */
+router.get('/available', getAvailableGroups);
+
+
+/**
+ * @swagger
+ * /api/groups/in-progress:
+ *   get:
+ *     summary: Retrieve a list of groups that are in progress
+ *     tags: [Groups]
+ *     responses:
+ *       200:
+ *         description: A list of groups in progress
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Group'
+ *       400:
+ *         description: Bad request
+ */
+router.get('/in-progress', getGroupInProgress);
+
+
+/**
+ * @swagger
+ * /api/groups/{id}:
+ *   delete:
+ *     summary: Delete a group
+ *     tags: [Groups]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The group ID
+ *     responses:
+ *       204:
+ *         description: Group deleted successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Group not found
+ */
+router.delete('/:id', deleteGroup);
 
 /**
  * @swagger
@@ -119,39 +163,6 @@ router.put('/:id', updateGroup);
 
 /**
  * @swagger
- * /api/groups/{groupId}/students/{studentId}:
- *   post:
- *     summary: Add a student to a group
- *     tags: [Groups]
- *     parameters:
- *       - in: path
- *         name: groupId
- *         required: true
- *         schema:
- *           type: string
- *         description: The group ID
- *       - in: path
- *         name: studentId
- *         required: true
- *         schema:
- *           type: string
- *         description: The student ID
- *     responses:
- *       200:
- *         description: Student added to the group successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Group'
- *       400:
- *         description: Bad request
- *       404:
- *         description: Group not found
- */
-router.post('/:groupId/students/:studentId', addStudentToGroup);
-
-/**
- * @swagger
  * /api/groups/{id}/info:
  *   put:
  *     summary: Update group information
@@ -183,24 +194,42 @@ router.post('/:groupId/students/:studentId', addStudentToGroup);
  */
 router.put('/:id/info', updateGroupInfo);
 
+
 /**
  * @swagger
- * /api/groups/available:
- *   get:
- *     summary: Retrieve a list of groups when there are available spots
+ * /api/groups/{groupId}/students/{studentId}:
+ *   post:
+ *     summary: Add a student to a group
  *     tags: [Groups]
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The group ID
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
  *     responses:
  *       200:
- *         description: A list of available groups
+ *         description: Student added to the group successfully
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Group'
+ *               $ref: '#/components/schemas/Group'
  *       400:
  *         description: Bad request
+ *       404:
+ *         description: Group not found
  */
-router.get('/available', getAvailableGroups);
+router.post('/:groupId/students/:studentId', addStudentToGroup);
+
+
+
+
 
 module.exports = router;
