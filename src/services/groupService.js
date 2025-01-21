@@ -202,10 +202,10 @@ exports.getGroupInProgress = async () => {
         daysOfWeek: {
             $in: [Object.keys(diasSemana).find(key => diasSemana[key] === currentDay)]
         }
-    });
+    }).populate('members');
 
     // Luego filtramos por horario en memoria
-    return groups.filter(group => {
+    const groupInProgress = groups.find(group => {
         const timeRange = parseTimeRange(group.schedule);
         const currentHour = now.hours();
         const currentMinute = now.minutes();
@@ -218,4 +218,6 @@ exports.getGroupInProgress = async () => {
         return currentTimeInMinutes >= startTimeInMinutes &&
             currentTimeInMinutes <= endTimeInMinutes;
     });
+
+    return groupInProgress || null;
 };
