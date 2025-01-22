@@ -30,6 +30,10 @@ exports.getAssistances = async () => {
     return Assistance.find().populate('student').populate('group');
 }
 
+exports.deleteAssistance = async (id) => {
+    return Assistance.findByIdAndDelete(id);
+}
+
 exports.getAssistance = async (id) => {
     return Assistance.findById(id).populate('student').populate('group');
 }
@@ -70,7 +74,7 @@ exports.patchAssistanceStatus = async (id, status) => {
     return assistance.save();
 }
 
-exports.getCurrentAssistance = async (studentId, groupId) => {
+exports.getTodayStudentAssistance = async (studentId, groupId) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 

@@ -5,7 +5,8 @@ const {
     getAssistances,
     updateAssistance,
     patchAssistanceStatus,
-    getTodayAssistancePerStudent
+    getTodayAssistancePerStudent,
+    deleteAssistance
 } = require('../controllers/assistanceController');
 
 const router = express.Router();
@@ -60,6 +61,29 @@ router.post('/', createAssistance);
  *         description: Bad request
  */
 router.get('/', getAssistances);
+
+/**
+ * @swagger
+ * /api/assistances/{id}:
+ *   delete:
+ *     summary: Delete an assistance
+ *     tags: [Assistance]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The assistance ID
+ *     responses:
+ *       204:
+ *         description: Assistance deleted successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Assistance not found
+ */
+router.delete('/:id', deleteAssistance);
 
 /**
  * @swagger
@@ -165,6 +189,3 @@ router.put('/:id', updateAssistance);
 router.patch('/:id/status', patchAssistanceStatus);
 
 module.exports = router;
-
-//678bff1d5af09b411accdc86
-//678bfe43540c39d844b87b09

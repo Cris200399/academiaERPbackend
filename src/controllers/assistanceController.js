@@ -9,6 +9,15 @@ exports.createAssistance = async (req, res) => {
     }
 }
 
+exports.deleteAssistance = async (req, res) => {
+    try {
+        await AssistanceService.deleteAssistance(req.params.id);
+        res.status(204).end();
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
 exports.getAssistances = async (req, res) => {
     try {
         const assistances = await AssistanceService.getAssistances();
@@ -39,7 +48,7 @@ exports.patchAssistanceStatus = async (req, res) => {
 exports.getTodayAssistancePerStudent = async (req, res) => {
     try {
         const { studentId, groupId } = req.query; // Obtener los parámetros de la URL
-        const assistance = await AssistanceService.getCurrentAssistance(studentId, groupId);
+        const assistance = await AssistanceService.getTodayStudentAssistance(studentId, groupId);
         res.json(assistance);
     } catch (error) {
         res.status(400).json({ message: error.message });

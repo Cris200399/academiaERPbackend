@@ -50,7 +50,10 @@ const assistanceSchema = new mongoose.Schema({
         type: String,
         enum: assistanceStatus,
         required: [true, 'Status is required'],
+        default: 'Ausente',
     },
 });
+
+assistanceSchema.index({ student: 1, group: 1, date: 1 }, { unique: true });
 
 module.exports = mongoose.model('Assistance', assistanceSchema);
