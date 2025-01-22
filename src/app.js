@@ -4,6 +4,7 @@ const cors = require('cors');
 const groupRoutes = require('./routes/groupRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const assistanceRoutes = require('./routes/assistanceRoutes');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.use('/api/students', studentRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/assistances', assistanceRoutes);
 
 
 // Middleware de manejo de errores

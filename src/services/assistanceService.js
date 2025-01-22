@@ -1,0 +1,88 @@
+const Assistance = require('../models/assistance');
+const Group = require('../models/group');
+const Student = require('../models/student');
+
+
+exports.createAssistance = async (data) => {
+    const {student, group, date, status} = data;
+
+    const existStudent = await Student.findById(student);
+    if (!existStudent) {
+        throw new Error('Student not found');
+    }
+
+    const existGroup = await Group.findById(group);
+    if (!existGroup) {
+        throw new Error('Group not found');
+    }
+
+    const assistance = new Assistance({
+        student,
+        group,
+        date,
+        status,
+    });
+
+    return assistance.save();
+}
+
+exports.getAssistances = async () => {
+    return Assistance.find().populate('student').populate('group');
+}
+
+exports.getAssistance = async (id) => {
+    return Assistance.findById(id).populate('student').populate('group');
+}
+
+exports.updateAssistance = async (id, data) => {
+    const {studentId, groupId, date, status} = data;
+
+    const student = await Student.findById(studentId);
+    if (!student) {
+        throw new Error('Student not found');
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+        throw new Error('Group not found');
+    }
+
+    const assistance = await Assistance.findById(id);
+    if (!assistance) {
+        throw new Error('Assistance not found');
+    }
+
+    assistance.student = studentId;
+    assistance.group = groupId;
+    assistance.date = date;
+    assistance.status = status;
+
+    return assistance.save();
+}
+
+exports.patchAssistanceStatus = async (id, status) => {
+    const assistance = await Assistance.findById(id);
+    if (!assistance) {
+        throw new Error('Assistance not found');
+    }
+
+    assistance.status = status;
+    return assistance.save();
+}
+
+exports.getCurrentAssistance = async (studentId, groupId) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    return Assistance.findOne({
+        group: groupId,
+        student: studentId,
+        date: {
+            $gte: today,
+            $lt: tomorrow
+        }
+    }).populate('student').populate('group');
+};

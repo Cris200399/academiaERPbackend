@@ -65,5 +65,16 @@ const groupSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
+groupSchema.methods.getStartTime = function () {
+    const [start] = this.schedule.split(' - ');
+    return start;
+};
+
+groupSchema.methods.getEndTime = function () {
+    const [, end] = this.schedule.split(' - ');
+    return end;
+};
+
+
 const Group = mongoose.model('Group', groupSchema);
 module.exports = Group;

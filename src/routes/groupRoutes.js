@@ -229,7 +229,4 @@ router.put('/:id/info', updateGroupInfo);
 router.post('/:groupId/students/:studentId', addStudentToGroup);
 
 
-
-
-
 module.exports = router;
