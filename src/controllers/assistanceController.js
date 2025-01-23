@@ -47,10 +47,20 @@ exports.patchAssistanceStatus = async (req, res) => {
 
 exports.getTodayAssistancePerStudent = async (req, res) => {
     try {
-        const { studentId, groupId } = req.query; // Obtener los parámetros de la URL
+        const {studentId, groupId} = req.query; // Obtener los parámetros de la URL
         const assistance = await AssistanceService.getTodayStudentAssistance(studentId, groupId);
         res.json(assistance);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({message: error.message});
+    }
+}
+
+exports.getAssistancesPerStudentId = async (req, res) => {
+    try {
+        const {studentId} = req.params;
+        const assistances = await AssistanceService.getLast30DaysAssistancesPerStudentId(studentId);
+        res.json(assistances);
+    } catch (error) {
+        res.status(400).json({message: error.message});
     }
 }

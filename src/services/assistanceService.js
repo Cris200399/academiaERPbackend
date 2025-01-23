@@ -90,3 +90,19 @@ exports.getTodayStudentAssistance = async (studentId, groupId) => {
         }
     }).populate('student').populate('group');
 };
+
+exports.getLast30DaysAssistancesPerStudentId = async (studentId) => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    const last30Days = new Date(today);
+    last30Days.setDate(today.getDate() - 30);
+
+    return Assistance.find({
+        student: studentId,
+        date: {
+            $gte: last30Days,
+            $lt: today
+        }
+    });
+}

@@ -6,7 +6,8 @@ const {
     updateAssistance,
     patchAssistanceStatus,
     getTodayAssistancePerStudent,
-    deleteAssistance
+    deleteAssistance,
+    getAssistancesPerStudentId
 } = require('../controllers/assistanceController');
 
 const router = express.Router();
@@ -64,29 +65,6 @@ router.get('/', getAssistances);
 
 /**
  * @swagger
- * /api/assistances/{id}:
- *   delete:
- *     summary: Delete an assistance
- *     tags: [Assistance]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The assistance ID
- *     responses:
- *       204:
- *         description: Assistance deleted successfully
- *       400:
- *         description: Bad request
- *       404:
- *         description: Assistance not found
- */
-router.delete('/:id', deleteAssistance);
-
-/**
- * @swagger
  * /api/assistances/today:
  *   get:
  *     summary: Retrieve today's assistance per student
@@ -117,6 +95,30 @@ router.delete('/:id', deleteAssistance);
  *         description: Bad request
  */
 router.get('/today', getTodayAssistancePerStudent);
+
+
+/**
+ * @swagger
+ * /api/assistances/{id}:
+ *   delete:
+ *     summary: Delete an assistance
+ *     tags: [Assistance]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The assistance ID
+ *     responses:
+ *       204:
+ *         description: Assistance deleted successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Assistance not found
+ */
+router.delete('/:id', deleteAssistance);
 
 /**
  * @swagger
@@ -187,5 +189,32 @@ router.put('/:id', updateAssistance);
  *         description: Assistance not found
  */
 router.patch('/:id/status', patchAssistanceStatus);
+
+/**
+ * @swagger
+ * /api/assistances/student/{studentId}:
+ *   get:
+ *     summary: Retrieve assistances for a specific student
+ *     tags: [Assistance]
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the student
+ *     responses:
+ *       200:
+ *         description: A list of assistances for the student
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Assistance'
+ *       400:
+ *         description: Bad request
+ */
+router.get('/student/:studentId', getAssistancesPerStudentId);
 
 module.exports = router;
