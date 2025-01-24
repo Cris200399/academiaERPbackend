@@ -12,57 +12,39 @@ const paymentMethods = require("../constants/paymentMethods");
  *         - student
  *         - type
  *         - amount
- *         - startDate
- *         - endDate
+ *         - date
  *         - paymentMethod
  *       properties:
  *         student:
  *           type: string
- *           description: Reference to the student making the payment
+ *           description: The ID of the student making the payment
  *         type:
  *           type: string
- *           enum:
- *             - group
- *             - private
- *           description: Type of payment, either for a group or a private class
+ *           description: The type of payment (group or private)
  *         amount:
  *           type: number
- *           description: Amount of the payment
- *         startDate:
+ *           description: The amount of the payment
+ *         date:
  *           type: string
  *           format: date
- *           description: Start date of the period covered by the payment
- *         endDate:
+ *           description: The date of the payment
+ *         groupPayment:
  *           type: string
- *           format: date
- *           description: End date of the period covered by the payment
- *         group:
+ *           description: The ID of the group payment if the type is 'group'
+ *         privatePayment:
  *           type: string
- *           description: Reference to the group if the payment is for a group
- *         privateClass:
- *           type: string
- *           description: Reference to the private class if the payment is for a private class
+ *           description: The ID of the private payment if the type is 'private'
  *         paymentMethod:
- *           type: string
- *           enum:
- *             - efectivo
- *             - tarjeta_de_crédito
- *             - transferencia_bancaria
- *             - yape
- *             - plin
- *           description: Method of payment
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: The methods of payment
  *         description:
  *           type: string
  *           description: Additional details about the payment
- *       example:
- *         student: 60d0fe4f5311236168a109ca
- *         type: group
- *         amount: 100
- *         startDate: 01-02-2024
- *         endDate: 01-03-2025
- *         group: 60d0fe4f5311236168a109cb
- *         paymentMethod: efectivo
- *         description: January group payment
+ *         status:
+ *           type: string
+ *           description: The status of the payment (pending or paid)
  */
 const paymentSchema = new mongoose.Schema({
     student: {
@@ -79,30 +61,26 @@ const paymentSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Amount is required'],
     },
-    startDate: {
-        type: Date, // Fecha de inicio del periodo que cubre el pago.
-        required: true,
+    date: {
+        type: Date, // Fecha del pago.
+        required: true
     },
-    endDate: {
-        type: Date, // Fecha de fin del periodo.
-        required: true,
-    },
-    group: {
+    groupPayment: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Group', // Relación con un grupo si el pago es de tipo 'group'.
+        ref: 'GroupClassPayment', // Relación con el groupPayment si el pago es de tipo 'group'.
         required: function () {
-            return this.type === 'group';
+            return this.type === 'grupal';
         },
     },
-    privateClass: {
+    privatePayment: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'PrivateClass', // Relación con una clase particular si el pago es de tipo 'private'.
+        ref: 'PrivateClassPayment', // Relación con una clase particular si el pago es de tipo 'private'.
         required: function () {
-            return this.type === 'private';
+            return this.type === 'particular';
         },
     },
     paymentMethod: {
-        type: String,
+        type: [String],
         enum: paymentMethods, // Métodos de pago.
         required: [true, 'Payment method is required'],
     },
@@ -110,6 +88,11 @@ const paymentSchema = new mongoose.Schema({
         type: String, // Detalles adicionales sobre el pago.
         required: false,
     },
+    status: {
+        type: String,
+        default: 'pendiente',
+        enum: ['pendiente', 'pagado']
+    }
 }, {timestamps: true});
 
 module.exports = mongoose.model('Payment', paymentSchema);

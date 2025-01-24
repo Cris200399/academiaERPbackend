@@ -18,19 +18,19 @@ exports.getPayments = async (req, res) => {
     }
 }
 
-exports.updatePayment = async (req, res) => {
+exports.getGroupPayments = async (req, res) => {
     try {
-        const payment = await PaymentService.updatePayment(req.params.id, req.body);
-        res.status(200).json(payment);
+        const payments = await PaymentService.getGroupPayments(req.query);
+        res.status(200).json(payments);
     } catch (error) {
         res.status(400).json({message: error.message});
     }
 }
 
-exports.deletePayment = async (req, res) => {
+exports.getPrivatePayments = async (req, res) => {
     try {
-        const payment = await PaymentService.deletePayment(req.params.id);
-        res.status(200).json(payment);
+        const payments = await PaymentService.getPrivatePayments(req.query);
+        res.status(200).json(payments);
     } catch (error) {
         res.status(400).json({message: error.message});
     }

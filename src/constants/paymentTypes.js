@@ -1,6 +1,6 @@
 const paymentTypes = [
-    'group',
-    'private'
+    'grupal',
+    'particular'
 ]
 
 module.exports = paymentTypes;

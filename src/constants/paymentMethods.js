@@ -4,7 +4,7 @@ const paymentMethods = [
     'transferencia_bancaria',
     'yape',
     'plin',
-    'otros'
+    'otro'
 ];
 
 module.exports = paymentMethods;

@@ -1,96 +1,108 @@
 const Payment = require('../models/payment');
+const GroupClassPayment = require('../models/groupClassPayment');
+const PrivateClassPayment = require('../models/privateClassPayment');
 const Student = require('../models/student');
-const {formatDate} = require("../utils/utils");
+const paymentTypes = require("../constants/paymentTypes");
 
+//JSON to create a group payment
+// {
+//     "student": "60d0fe4f5311236168a109ca",
+//     "type": "group",
+//     "amount": 100,
+//     "date": "2024-02-01",
+//     "groupPayment": {
+//         "group": "60d0fe4f5311236168a109cb",
+//         "startDate": "2024-02-01",
+//         "endDate": "2025-03-01"
+//     },
+//     "paymentMethod": ["efectivo", "yape"],
+//     "description": "January group payment"
+// }
 
-exports.createPayment = async (paymentData) => {
-    const {student, type, amount, startDate, endDate, group, privateClass, paymentMethod, description} = paymentData;
-
-    const existStudent = await Student.findById(student);
-    if (!existStudent) {
-        throw new Error('Student not found');
-    }
-
-    formatDate(startDate);
-    formatDate(endDate);
-
-    const payment = new Payment({
+//JSON to create a private payment
+// {
+//     "student": "60d0fe4f5311236168a109ca",
+//     "type": "private",
+//     "amount": 50,
+//     "date": "2024-02-01",
+//     "privatePayment": {
+//         "date": "2024-02-01"
+//         "startTime": "08:00",
+//         "endTime": "09:00"
+//     },
+//     "paymentMethod": ["efectivo", "yape"],
+//     "description": "January private class payment"
+// }
+exports.createPayment = async (data) => {
+    const {
         student,
         type,
         amount,
-        startDate,
-        endDate,
-        group,
-        privateClass,
+        date,
         paymentMethod,
-        description
-    });
-    await payment.save();
-    if (endDate < new Date()) {
-        await existStudent.updateOne({$set: {paymentStatus: 'overdue'}});
-    } else {
-        await existStudent.updateOne({$set: {paymentStatus: 'up-to-date'}});
-    }
-    return payment;
+        description,
+        status
+    } = data;
 
-}
-
-exports.updatePayment = async (paymentId, paymentData) => {
-    const {student, type, amount, startDate, endDate, group, privateClass, paymentMethod, description} = paymentData;
-
-    const existPayment = await Payment.findById(paymentId);
-    if (!existPayment) {
-        throw new Error('Payment not found');
-    }
-
-    const existStudent = await Student.findById(student);
-    if (!existStudent) {
+    const studentExists = await Student.findById(student);
+    if (!studentExists) {
         throw new Error('Student not found');
     }
 
-    formatDate(startDate);
-    formatDate(endDate);
+    // Check if the class is for a group
+    if (type === paymentTypes[0]) {
+        const {groupPayment} = data;
+        const newGroupPayment = await GroupClassPayment.create(groupPayment);
 
-    await existPayment.updateOne({
-        student,
-        type,
-        amount,
-        startDate,
-        endDate,
-        group,
-        privateClass,
-        paymentMethod,
-        description
-    });
-
-    if (endDate < new Date()) {
-        await existStudent.updateOne({$set: {paymentStatus: 'overdue'}});
-    } else {
-        await existStudent.updateOne({$set: {paymentStatus: 'up-to-date'}});
+        return await Payment.create({
+            student,
+            type,
+            amount,
+            date,
+            paymentMethod,
+            description,
+            status,
+            groupPayment: newGroupPayment._id
+        });
     }
 
-    return await Payment.findById(paymentId);
-}
+    // Check if the class is for a private class
+    if (type === paymentTypes[1]) {
+        const {privatePayment} = data;
+        const newPrivatePayment = await PrivateClassPayment.create(privatePayment);
 
-exports.deletePayment = async (paymentId) => {
-    const existPayment = await Payment.findById(paymentId);
-    if (!existPayment) {
-        throw new Error('Payment not found');
+        return await Payment.create({
+            student,
+            type,
+            amount,
+            date,
+            paymentMethod,
+            description,
+            status,
+            privatePayment: newPrivatePayment._id
+        });
+
     }
-    await existPayment.remove();
-    return existPayment;
 }
 
 exports.getPayments = async (query) => {
-    return Payment.find(query).populate('student');
+    return Payment.find(req.query)
+        .populate({
+            path: 'groupPayment',
+            populate: {path: 'group'},
+            match: {type: 'grupal'} // Only populate if type is 'grupal'
+        })
+        .populate({
+            path: 'privatePayment',
+            populate: {path: 'privateClass'},
+            match: {type: 'particular'} // Only populate if type is 'particular'
+        });
 }
 
-exports.getOverduePayments = async () => {
-    const now = new Date();
-    return Payment.find({endDate: {$lt: now}});
+exports.getGroupPayments = async (query) => {
+    return Payment.find({type: 'grupal', ...query}).populate('groupPayment');
 }
 
-exports.getOverduePaymentByUserId = async (userId) => {
-    const now = new Date();
-    return Payment.find({student: userId, endDate: {$lt: now}});
+exports.getPrivatePayments = async (query) => {
+    return Payment.find({type: 'particular', ...query}).populate('privatePayment');
 }
