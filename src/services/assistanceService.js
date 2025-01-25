@@ -1,5 +1,5 @@
 const Assistance = require('../models/assistance');
-const Group = require('../models/group');
+const Group = require('../models/groupClass');
 const Student = require('../models/student');
 
 

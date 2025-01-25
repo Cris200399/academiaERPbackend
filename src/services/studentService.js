@@ -1,5 +1,5 @@
 const Student = require('../models/student');
-const Group = require('../models/group');
+const Group = require('../models/groupClass');
 const Guardian = require('../models/guardian');
 
 const {formatDate} = require('../utils/utils.js');

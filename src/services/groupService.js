@@ -1,4 +1,4 @@
-const Group = require('../models/group');
+const Group = require('../models/groupClass');
 const moment = require('moment');
 const diasSemana = require("../constants/weekDays");
 const {parseTimeRange} = require("../utils/utils");

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
  * @swagger
  * components:
  *   schemas:
- *     Group:
+ *     GroupClass:
  *       type: object
  *       required:
  *         - name
@@ -36,7 +36,7 @@ const mongoose = require('mongoose');
  *           type: string
  *           description: The schedule of the group
  */
-const groupSchema = new mongoose.Schema({
+const groupClassSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Name is required'],
@@ -65,16 +65,16 @@ const groupSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
-groupSchema.methods.getStartTime = function () {
+groupClassSchema.methods.getStartTime = function () {
     const [start] = this.schedule.split(' - ');
     return start;
 };
 
-groupSchema.methods.getEndTime = function () {
+groupClassSchema.methods.getEndTime = function () {
     const [, end] = this.schedule.split(' - ');
     return end;
 };
 
 
-const Group = mongoose.model('Group', groupSchema);
-module.exports = Group;
+const GroupClass = mongoose.model('Group', groupClassSchema);
+module.exports = GroupClass;
