@@ -21,7 +21,7 @@ const groupClassPaymentSchema = new mongoose.Schema({
         enum: paymentMethods, // Métodos de pago.
         required: [true, 'Payment method is required'],
     },
-    group: {
+    groupClass: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Group',
         required: [true, 'Group is required'],

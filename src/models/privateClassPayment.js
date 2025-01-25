@@ -15,6 +15,11 @@ const privateClassPaymentSchema = new mongoose.Schema({
         type: Date, // Fecha del pago.
         required: true
     },
+    privateClass: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PrivateClass',
+        required: [true, 'Private class is required'],
+    },
     paymentMethod: {
         type: [String],
         enum: paymentMethods, // Métodos de pago.
