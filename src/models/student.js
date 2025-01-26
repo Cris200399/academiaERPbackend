@@ -94,11 +94,6 @@ const studentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Guardian',
     },
-    paymentStatus: {
-        type: String,
-        enum: ['up-to-date', 'overdue', 'no-payment'], // Estado del pago.
-        default: 'no-payment',
-    },
     profileImageId: { // Referencia al archivo de imagen en GridFS
         type: mongoose.Schema.Types.ObjectId,
         ref: 'uploads'

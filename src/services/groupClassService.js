@@ -221,3 +221,7 @@ exports.getGroupInProgress = async () => {
 
     return groupInProgress || null;
 };
+
+exports.getGroupWithMembers = async (groupId) => {
+    return Group.findById(groupId).populate('members');
+}

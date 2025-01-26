@@ -73,3 +73,12 @@ exports.getGroupInProgress = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.getGroupWithMembers = async (req, res) => {
+    try {
+        const group = await GroupService.getGroupWithMembers(req.params.id);
+        res.status(200).json(group);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

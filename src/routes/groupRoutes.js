@@ -8,7 +8,8 @@ const {
     deleteGroup,
     updateGroupInfo,
     getAvailableGroups,
-    getGroupInProgress
+    getGroupInProgress,
+    getGroupWithMembers
 } = require('../controllers/groupController');
 
 const router = express.Router();
@@ -103,6 +104,33 @@ router.get('/available', getAvailableGroups);
  *         description: Bad request
  */
 router.get('/in-progress', getGroupInProgress);
+
+/**
+ * @swagger
+ * /api/groups/{id}/members:
+ *   get:
+ *     summary: Retrieve a group with its members
+ *     tags: [Groups]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The group ID
+ *     responses:
+ *       200:
+ *         description: Group with members retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/GroupClass'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Group not found
+ */
+router.get('/:id/members', getGroupWithMembers);
 
 
 /**
