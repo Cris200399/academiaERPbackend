@@ -14,7 +14,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /group-payments:
+ * /api/group-payments:
  *   post:
  *     summary: Create a new group payment
  *     tags: [GroupPayment]
@@ -61,7 +61,7 @@ const router = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/GroupPayment'
+ *               $ref: '#/components/schemas/GroupClassPayment'
  *       400:
  *         description: Bad request
  */
@@ -70,7 +70,7 @@ router.post('/', groupPaymentController.createGroupPayment);
 
 /**
  * @swagger
- * /group-payments:
+ * /api/group-payments:
  *   get:
  *     summary: Retrieve a list of group payments
  *     tags: [GroupPayment]
@@ -98,7 +98,7 @@ router.post('/', groupPaymentController.createGroupPayment);
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/GroupPayment'
+ *                 $ref: '#/components/schemas/GroupClassPayment'
  *       400:
  *         description: Bad request
  */

@@ -18,7 +18,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/private-class', privateClassRoutes);
 app.use('/api/assistances', assistanceRoutes);
-app.use('/api/group-payment', groupPaymentRoutes);
+app.use('/api/group-payments', groupPaymentRoutes);
 
 
 // Middleware de manejo de errores

@@ -34,7 +34,7 @@ const router = express.Router();
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Group'
+ *                 $ref: '#/components/schemas/GroupClass'
  */
 router.get('/', getGroups);
 
@@ -49,14 +49,14 @@ router.get('/', getGroups);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Group'
+ *             $ref: '#/components/schemas/GroupClass'
  *     responses:
  *       201:
  *         description: Group created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Group'
+ *               $ref: '#/components/schemas/GroupClass'
  *       400:
  *         description: Bad request
  */
@@ -77,7 +77,7 @@ router.post('/', createGroup);
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Group'
+ *                 $ref: '#/components/schemas/GroupClass'
  *       400:
  *         description: Bad request
  */
@@ -98,7 +98,7 @@ router.get('/available', getAvailableGroups);
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Group'
+ *                 $ref: '#/components/schemas/GroupClass'
  *       400:
  *         description: Bad request
  */
@@ -146,14 +146,14 @@ router.delete('/:id', deleteGroup);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Group'
+ *             $ref: '#/components/schemas/GroupClass'
  *     responses:
  *       200:
  *         description: Group updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Group'
+ *               $ref: '#/components/schemas/GroupClass'
  *       400:
  *         description: Bad request
  *       404:
@@ -179,14 +179,14 @@ router.put('/:id', updateGroup);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Group'
+ *             $ref: '#/components/schemas/GroupClass'
  *     responses:
  *       200:
  *         description: Group information updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Group'
+ *               $ref: '#/components/schemas/GroupClass'
  *       400:
  *         description: Bad request
  *       404:
@@ -220,7 +220,7 @@ router.put('/:id/info', updateGroupInfo);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Group'
+ *               $ref: '#/components/schemas/GroupClass'
  *       400:
  *         description: Bad request
  *       404:

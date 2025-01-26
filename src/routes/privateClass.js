@@ -7,20 +7,29 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *   name: PrivateClass
+ *   name: PrivateClassAndPayment
  *   description: PrivatePayment management
  */
-
 
 /**
  * @swagger
  * /api/private-class:
  *   post:
- *     summary: Create a new private class and payment
- *     tags: [PrivatePayment]
+ *     summary: Create a new private payment
+ *     tags: [PrivateClassAndPayment]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PrivateClassPayment'
  *     responses:
  *       201:
- *         description: A private class and payment
+ *         description: Private payment created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PrivateClassPayment'
  *       400:
  *         description: Bad request
  */
@@ -30,8 +39,8 @@ router.post('/', privatePaymentController.createPrivatePayment);
  * @swagger
  * /api/private-class:
  *   get:
- *     summary: Retrieve all private payments
- *     tags: [PrivatePayment]
+ *     summary: Retrieve a list of private payments
+ *     tags: [PrivateClassAndPayment]
  *     responses:
  *       200:
  *         description: A list of private payments
@@ -40,7 +49,7 @@ router.post('/', privatePaymentController.createPrivatePayment);
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/PrivatePayment'
+ *                 $ref: '#/components/schemas/PrivateClassPayment'
  *       400:
  *         description: Bad request
  */
