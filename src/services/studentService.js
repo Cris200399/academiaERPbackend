@@ -50,8 +50,6 @@ exports.createStudent = async (studentData) => {
         } else {
             throw new Error('Group not found or group is full');
         }
-    } else {
-        throw new Error('Group not found');
     }
     return student;
 };

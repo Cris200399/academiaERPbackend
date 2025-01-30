@@ -222,6 +222,14 @@ exports.getGroupInProgress = async () => {
     return groupInProgress || null;
 };
 
-exports.getGroupWithMembers = async (groupId) => {
-    return Group.findById(groupId).populate('members');
-}
+exports.getGroupWithActiveMembers = async (groupId) => {
+    const group = await Group.findById(groupId).populate('members');
+    if (!group) {
+        throw new Error('Group not found');
+    }
+    const activeMembers = group.members.filter(member => member.status === 'activo');
+    return {
+        ...group.toObject(),
+        members: activeMembers
+    };
+};
