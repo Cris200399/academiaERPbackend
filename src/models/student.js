@@ -100,6 +100,11 @@ const studentSchema = new mongoose.Schema({
     },
     documentId: {
         type: mongoose.Schema.Types.ObjectId
+    },
+    status: {
+        type: String,
+        enum: ['activo', 'inactivo'],
+        default: 'activo'
     }
 }, {timestamps: true});
 

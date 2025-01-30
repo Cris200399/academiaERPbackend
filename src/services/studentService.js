@@ -200,3 +200,12 @@ exports.updateDocumentFile = async (id, documentFile) => {
         throw new Error('Error al actualizar el documento: ' + error.message);
     }
 }
+
+exports.changeStudentStatus = async (id, status) => {
+    const student = await Student.findById(id);
+    if (!student) {
+        throw new Error('Estudiante no encontrado');
+    }
+    student.status = status;
+    return student.save();
+}
