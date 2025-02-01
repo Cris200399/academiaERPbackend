@@ -12,7 +12,8 @@ const {
     updateDocumentFile,
     getDocumentFile,
     deleteProfileImage,
-    getStudent
+    getStudent,
+    changeStudentStatus
 } = require('../controllers/studentController');
 
 
@@ -228,6 +229,43 @@ router.put('/:id', updateStudent);
  */
 router.delete('/:id', deleteStudent);
 
+/**
+ * @swagger
+ * /api/students/{id}/status:
+ *   patch:
+ *     summary: Change the status of a student
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The student ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: The new status of the student
+ *     responses:
+ *       200:
+ *         description: Student status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Student'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ */
+router.patch('/:id/status', changeStudentStatus);
+
 
 /**
  * @swagger
@@ -398,6 +436,8 @@ router.put('/:studentId/document', upload.single('document'), updateDocumentFile
  *         description: Internal server error
  */
 router.get('/:studentId/document', getDocumentFile);
+
+
 
 
 

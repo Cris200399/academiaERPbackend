@@ -50,8 +50,6 @@ exports.createStudent = async (studentData) => {
         } else {
             throw new Error('Group not found or group is full');
         }
-    } else {
-        throw new Error('Group not found');
     }
     return student;
 };
@@ -199,4 +197,13 @@ exports.updateDocumentFile = async (id, documentFile) => {
     } catch (error) {
         throw new Error('Error al actualizar el documento: ' + error.message);
     }
+}
+
+exports.changeStudentStatus = async (id, status) => {
+    const student = await Student.findById(id);
+    if (!student) {
+        throw new Error('Estudiante no encontrado');
+    }
+    student.status = status;
+    return student.save();
 }
