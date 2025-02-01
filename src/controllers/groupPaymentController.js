@@ -17,3 +17,12 @@ exports.getGroupPayments = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.deleteGroupPayment = async (req, res) => {
+    try {
+        await GroupPaymentService.deleteGroupPayment(req.params.id);
+        res.status(204).send();
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

@@ -63,7 +63,8 @@ const groupClassPaymentSchema = new mongoose.Schema({
     },
     date: {
         type: Date, // Fecha del pago.
-        required: true
+        required: true,
+        default: Date.now
     },
     paymentMethod: {
         type: [String],
@@ -83,7 +84,7 @@ const groupClassPaymentSchema = new mongoose.Schema({
         type: Date,
         required: [true, 'End date is required'],
     },
-    description: {
+    concept: {
         type: String, // Detalles adicionales sobre el pago.
         required: false,
     },

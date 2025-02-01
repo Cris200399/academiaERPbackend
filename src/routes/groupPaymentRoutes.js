@@ -104,4 +104,25 @@ router.post('/', groupPaymentController.createGroupPayment);
  */
 router.get('/', groupPaymentController.getGroupPayments);
 
+/**
+ * @swagger
+ * /api/group-payments/{id}:
+ *   delete:
+ *     summary: Delete a group payment
+ *     tags: [GroupPayment]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the group payment
+ *     responses:
+ *       204:
+ *         description: The group payment was successfully deleted
+ *       400:
+ *         description: Bad request
+ */
+router.delete('/:id', groupPaymentController.deleteGroupPayment);
+
 module.exports = router;

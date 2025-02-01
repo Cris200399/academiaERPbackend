@@ -11,7 +11,7 @@ exports.createGroupPayment = async (data) => {
         groupClass,
         startDate,
         endDate,
-        description,
+        concept,
         status
     } = data;
     if (!await Student.findById(student)) {
@@ -28,7 +28,7 @@ exports.createGroupPayment = async (data) => {
         groupClass,
         startDate,
         endDate,
-        description,
+        concept,
         status
     });
     return groupPayment.save();
@@ -36,4 +36,8 @@ exports.createGroupPayment = async (data) => {
 
 exports.getGroupPayments = async (query) => {
     return GroupClassPayment.find(query);
+}
+
+exports.deleteGroupPayment = async (id) => {
+    return GroupClassPayment.findByIdAndDelete(id);
 }
