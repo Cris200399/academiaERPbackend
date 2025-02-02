@@ -6,6 +6,8 @@ dotenv.config();
 const {connectDB} = require('./config/database');
 const swaggerDocs = require('./swagger');
 
+require('./jobs/updateStudentPaymentStatus');
+
 
 // Conectar a MongoDB
 const mongoUri = process.env.MONGO_URI;

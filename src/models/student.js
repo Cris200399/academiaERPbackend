@@ -105,6 +105,11 @@ const studentSchema = new mongoose.Schema({
         type: String,
         enum: ['activo', 'inactivo'],
         default: 'activo'
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['sin_pago','al_día', 'por_vencer', 'vencido'],
+        default: 'sin_pago'
     }
 }, {timestamps: true});
 
