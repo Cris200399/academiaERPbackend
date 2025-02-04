@@ -1,7 +1,7 @@
 const Group = require('../models/groupClass');
 const moment = require('moment');
 const diasSemana = require("../constants/weekDays");
-const {parseTimeRange} = require("../utils/utils");
+const {parseTimeRange, getClassDateTime} = require("../utils/utils");
 
 
 exports.createGroup = async (groupData) => {
@@ -245,7 +245,22 @@ exports.getTodayGroupActivities = async () => {
     });
 
     return groups.map(group => {
-        const timeRange = parseTimeRange(group.schedule);
+        const timeRange = parseTimeRange(group.schedule, currentDay);
+        return {
+            ...group.toObject(),
+            timeRange
+        };
+    });
+}
+
+exports.getWeekGroupActivities = async () => {
+
+    const groups = await Group.find();
+
+    return groups.map(group => {
+        const timeRange = group.daysOfWeek.map(day => {
+            return getClassDateTime(group.schedule, day);
+        });
         return {
             ...group.toObject(),
             timeRange

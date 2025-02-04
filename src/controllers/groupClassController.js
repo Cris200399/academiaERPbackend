@@ -91,3 +91,12 @@ exports.getTodayGroupActivities = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.getWeekGroupActivities = async (req, res) => {
+    try {
+        const activities = await GroupService.getWeekGroupActivities();
+        res.status(200).json(activities);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
