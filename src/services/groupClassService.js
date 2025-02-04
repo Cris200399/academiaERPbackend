@@ -233,3 +233,22 @@ exports.getGroupWithActiveMembers = async (groupId) => {
         members: activeMembers
     };
 };
+
+exports.getTodayGroupActivities = async () => {
+    const now = moment();
+    const currentDay = now.day();
+
+    const groups = await Group.find({
+        daysOfWeek: {
+            $in: [Object.keys(diasSemana).find(key => diasSemana[key] === currentDay)]
+        }
+    });
+
+    return groups.map(group => {
+        const timeRange = parseTimeRange(group.schedule);
+        return {
+            ...group.toObject(),
+            timeRange
+        };
+    });
+}

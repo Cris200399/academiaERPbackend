@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 //routes
-const groupRoutes = require('./routes/groupRoutes');
+const groupRoutes = require('./routes/groupClassRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const assistanceRoutes = require('./routes/assistanceRoutes');
 const privateClassRoutes = require('./routes/privateClass');

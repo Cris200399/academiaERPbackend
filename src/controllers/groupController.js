@@ -82,3 +82,12 @@ exports.getGroupWithMembers = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.getTodayGroupActivities = async (req, res) => {
+    try {
+        const activities = await GroupService.getTodayGroupActivities();
+        res.status(200).json(activities);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

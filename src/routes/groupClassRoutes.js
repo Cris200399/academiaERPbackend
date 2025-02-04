@@ -9,7 +9,8 @@ const {
     updateGroupInfo,
     getAvailableGroups,
     getGroupInProgress,
-    getGroupWithMembers
+    getGroupWithMembers,
+    getTodayGroupActivities
 } = require('../controllers/groupController');
 
 const router = express.Router();
@@ -62,6 +63,26 @@ router.get('/', getGroups);
  *         description: Bad request
  */
 router.post('/', createGroup);
+
+/**
+ * @swagger
+ * /api/groups/today:
+ *   get:
+ *     summary: Retrieve today's group activities
+ *     tags: [Groups]
+ *     responses:
+ *       200:
+ *         description: A list of today's group activities
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/GroupClass'
+ *       400:
+ *         description: Bad request
+ */
+router.get('/today', getTodayGroupActivities);
 
 
 /**
