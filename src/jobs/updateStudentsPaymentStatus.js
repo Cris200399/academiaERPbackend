@@ -43,8 +43,8 @@ const updateStudentPaymentStatus = async (today, student) => {
 }
 
 // Programar la tarea para que se ejecute todos los días a las 00:00
-cron.schedule('* * * * *', updateStudentsPaymentStatus, {
-// cron.schedule('0 0 * * *', updateStudentsPaymentStatus, {
+// cron.schedule('* * * * *', updateStudentsPaymentStatus, {
+cron.schedule('0 0 * * *', updateStudentsPaymentStatus, {
     scheduled: true,
     timezone: "America/Lima"
 });

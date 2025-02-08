@@ -48,4 +48,29 @@ router.get('/3-latest-months-payments', paymentsReportsController.get3LatestMont
  */
 router.get('/total-payments-actual-month', paymentsReportsController.getTotalPaymentsForActualMonth);
 
+/**
+ * @swagger
+ * /api/payments-reports/total-payments-month/{month}:
+ *   get:
+ *     summary: Retrieve total payments for a specific month
+ *     tags: [PaymentsReports]
+ *     parameters:
+ *       - in: path
+ *         name: month
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The month for which to retrieve total payments (0-11)
+ *     responses:
+ *       200:
+ *         description: Total payments for the specified month
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       400:
+ *         description: Bad request
+ */
+router.get('/total-payments-month/:month', paymentsReportsController.getTotalPaymentsForAMonth);
+
 module.exports = router;
