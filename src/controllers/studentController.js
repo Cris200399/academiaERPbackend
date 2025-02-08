@@ -151,3 +151,21 @@ exports.changeStudentStatus = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.getTotalOverdueStudents = async (req, res) => {
+    try {
+        const students = await StudentService.getTotalOverdueStudents();
+        res.status(200).json(students);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
+exports.getTotalStudentsAboutToExpire = async (req, res) => {
+    try {
+        const students = await StudentService.getTotalStudentsAboutToExpire();
+        res.status(200).json(students);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

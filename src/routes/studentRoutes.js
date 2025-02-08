@@ -1,20 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 
-const {
-    createStudent,
-    getStudents,
-    updateStudent,
-    deleteStudent,
-    getTotalStudents,
-    getProfileImage,
-    updateProfileImage,
-    updateDocumentFile,
-    getDocumentFile,
-    deleteProfileImage,
-    getStudent,
-    changeStudentStatus
-} = require('../controllers/studentController');
+const StudentController = require('../controllers/studentController');
 
 
 const router = express.Router();
@@ -55,7 +42,7 @@ const upload = multer({
  *               items:
  *                 $ref: '#/components/schemas/Student'
  */
-router.get('/', getStudents);
+router.get('/', StudentController.getStudents);
 
 /**
  * @swagger
@@ -124,7 +111,7 @@ router.get('/', getStudents);
  *         '500':
  *           description: Internal server error
  */
-router.post('/', createStudent);
+router.post('/', StudentController.createStudent);
 
 /**
  * @swagger
@@ -143,8 +130,45 @@ router.post('/', createStudent);
  *       400:
  *         description: Bad request
  */
-router.get('/total', getTotalStudents);
+router.get('/total', StudentController.getTotalStudents);
 
+/**
+ * @swagger
+ * /api/students/total-overdue-students:
+ *   get:
+ *     summary: Get the total number of students with overdue payments
+ *     tags: [Students]
+ *     responses:
+ *       200:
+ *         description: Total number of students with overdue payments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: integer
+ *               example: 10
+ *       400:
+ *         description: Bad request
+ */
+router.get('/total-overdue-students', StudentController.getTotalOverdueStudents);
+
+/**
+ * @swagger
+ * /api/students/total-about-to-expire:
+ *   get:
+ *     summary: Get the total number of students with payments about to expire
+ *     tags: [Students]
+ *     responses:
+ *       200:
+ *         description: Total number of students with payments about to expire
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: integer
+ *               example: 5
+ *       400:
+ *         description: Bad request
+ */
+router.get('/total-about-to-expire', StudentController.getTotalStudentsAboutToExpire);
 
 /**
  * @swagger
@@ -171,7 +195,7 @@ router.get('/total', getTotalStudents);
  *       404:
  *         description: Student not found
  */
-router.get('/:id', getStudent);
+router.get('/:id', StudentController.getStudent);
 
 /**
  * @swagger
@@ -204,7 +228,7 @@ router.get('/:id', getStudent);
  *       404:
  *         description: Student not found
  */
-router.put('/:id', updateStudent);
+router.put('/:id', StudentController.updateStudent);
 
 /**
  * @swagger
@@ -227,7 +251,7 @@ router.put('/:id', updateStudent);
  *       404:
  *         description: Student not found
  */
-router.delete('/:id', deleteStudent);
+router.delete('/:id', StudentController.deleteStudent);
 
 /**
  * @swagger
@@ -264,7 +288,7 @@ router.delete('/:id', deleteStudent);
  *       404:
  *         description: Student not found
  */
-router.patch('/:id/status', changeStudentStatus);
+router.patch('/:id/status', StudentController.changeStudentStatus);
 
 
 /**
@@ -305,7 +329,7 @@ router.patch('/:id/status', changeStudentStatus);
  *       500:
  *         description: Internal server error
  */
-router.put('/:studentId/profile-image', upload.single('image'), updateProfileImage);
+router.put('/:studentId/profile-image', upload.single('image'), StudentController.updateProfileImage);
 
 /**
  * @swagger
@@ -335,7 +359,7 @@ router.put('/:studentId/profile-image', upload.single('image'), updateProfileIma
  *       500:
  *         description: Internal server error
  */
-router.get('/:studentId/profile-image', getProfileImage);
+router.get('/:studentId/profile-image', StudentController.getProfileImage);
 
 /**
  * @swagger
@@ -364,7 +388,7 @@ router.get('/:studentId/profile-image', getProfileImage);
  *       500:
  *         description: Internal server error
  */
-router.delete('/:studentId/profile-image', deleteProfileImage);
+router.delete('/:studentId/profile-image', StudentController.deleteProfileImage);
 
 
 /**
@@ -405,7 +429,7 @@ router.delete('/:studentId/profile-image', deleteProfileImage);
  *       500:
  *         description: Internal server error
  */
-router.put('/:studentId/document', upload.single('document'), updateDocumentFile);
+router.put('/:studentId/document', upload.single('document'), StudentController.updateDocumentFile);
 
 /**
  * @swagger
@@ -435,9 +459,7 @@ router.put('/:studentId/document', upload.single('document'), updateDocumentFile
  *       500:
  *         description: Internal server error
  */
-router.get('/:studentId/document', getDocumentFile);
-
-
+router.get('/:studentId/document', StudentController.getDocumentFile);
 
 
 

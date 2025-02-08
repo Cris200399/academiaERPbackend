@@ -208,3 +208,10 @@ exports.changeStudentStatus = async (id, status) => {
     return student.save();
 }
 
+exports.getTotalOverdueStudents = async () => {
+    return Student.countDocuments({paymentStatus: 'vencido'});
+}
+
+exports.getTotalStudentsAboutToExpire = async () => {
+    return Student.countDocuments({paymentStatus: 'por_vencer'});
+};
