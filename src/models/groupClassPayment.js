@@ -87,11 +87,6 @@ const groupClassPaymentSchema = new mongoose.Schema({
     concept: {
         type: String, // Detalles adicionales sobre el pago.
         required: false,
-    },
-    status: {
-        type: String,
-        default: 'pendiente',
-        enum: ['pendiente', 'pagado']
     }
 }, {timestamps: true});
 

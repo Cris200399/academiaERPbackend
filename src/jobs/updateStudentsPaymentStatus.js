@@ -38,15 +38,18 @@ const updateStudentPaymentStatus = async (today, student) => {
 
         student.paymentStatus = paymentStatus;
         await student.save();
+    }else{
+        student.paymentStatus = 'sin_pago';
+        await student.save();
     }
 
 }
 
 // Programar la tarea para que se ejecute todos los días a las 00:00
-// cron.schedule('* * * * *', updateStudentsPaymentStatus, {
 cron.schedule('0 0 * * *', updateStudentsPaymentStatus, {
+// cron.schedule('*/10 * * * * *', updateStudentsPaymentStatus, {
     scheduled: true,
     timezone: "America/Lima"
 });
 
-module.exports = {updateStudentsPaymentStatus};
+module.exports = {updateStudentsPaymentStatus, updateStudentPaymentStatus};

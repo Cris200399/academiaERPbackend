@@ -267,3 +267,13 @@ exports.getWeekGroupActivities = async () => {
         };
     });
 }
+
+exports.removeStudentFromGroup = async (groupId, studentId) => {
+    const group = await Group.findById(groupId);
+    if (!group) {
+        throw new Error('Group not found');
+    }
+    group.members = group.members.filter(member => member.toString() !== studentId);
+    await group.save();
+    return group;
+}

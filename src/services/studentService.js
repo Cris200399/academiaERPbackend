@@ -6,6 +6,7 @@ const {formatDate} = require('../utils/utils.js');
 const {getAge} = require("../utils/utils");
 
 const gridFSService = require('../services/gridfsService');
+const {removeStudentFromGroup} = require("./groupClassService");
 
 exports.createStudent = async (studentData) => {
     const {name, lastName, address, gender, dateOfBirth, email, phone, group, dni, guardian} = studentData;
@@ -68,16 +69,13 @@ exports.updateStudent = async (id, studentData) => {
         throw new Error('Student not found');
     }
 
-    //studentData.dateOfBirth = formatDate(studentData.dateOfBirth);
-
     const oldGroupId = existStudent.group;
     const newGroupId = studentData.group;
 
-
     const newGroup = await Group.findById(newGroupId);
-    const oldGroup = await Group.findById(oldGroupId);
+    const oldGroup = oldGroupId ? await Group.findById(oldGroupId) : null;
 
-    if (newGroupId && oldGroupId.toString() !== newGroupId) {
+    if (newGroupId && (!oldGroupId || oldGroupId.toString() !== newGroupId)) {
         if (newGroup && newGroup.members.length < newGroup.maxMembers) {
             newGroup.members.push(existStudent._id);
             await newGroup.save();
@@ -205,6 +203,12 @@ exports.changeStudentStatus = async (id, status) => {
         throw new Error('Estudiante no encontrado');
     }
     student.status = status;
+    if (status === 'inactivo' && student.group) {
+        //Remove Student from Group
+        const group = await removeStudentFromGroup(student.group, id);
+        student.group = undefined;
+    }
+
     return student.save();
 }
 

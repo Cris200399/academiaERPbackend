@@ -26,3 +26,12 @@ exports.deleteGroupPayment = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.getAllGroupPaymentsPerStudent = async (req, res) => {
+    try {
+        const groupPayments = await GroupPaymentService.getAllGroupPaymentsPerStudent();
+        res.status(200).json(groupPayments);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
