@@ -90,4 +90,28 @@ const groupClassPaymentSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
+groupClassPaymentSchema.pre('save', async function (next) {
+    try {
+        const pagoExistente = await this.constructor.findOne({
+            student: this.student,
+            _id: {$ne: this._id}, // Excluir el documento actual si es una actualización
+            $or: [
+                {startDate: {$lte: this.endDate}, endDate: {$gte: this.startDate}}, // Condición de superposición
+                {startDate: {$gte: this.startDate, $lte: this.endDate}}, // Fecha de inicio dentro del rango existente
+                {endDate: {$gte: this.startDate, $lte: this.endDate}}    // Fecha de fin dentro del rango existente
+            ]
+        });
+
+        if (pagoExistente) {
+            return next(new Error('Fechas de pago superpuestas para este estudiante'));
+        }
+
+        next(); // Continuar si no hay superposición
+    } catch (err) {
+        next(err);
+    }
+});
+
+groupClassPaymentSchema.index({student: 1, startDate: 1, endDate: 1}, {unique: true});
+
 module.exports = mongoose.model('GroupClassPayment', groupClassPaymentSchema);

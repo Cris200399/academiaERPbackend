@@ -63,3 +63,27 @@ exports.getAllGroupPaymentsPerStudent = async () => {
         };
     }));
 }
+
+exports.updateGroupPayment = async (id, data) => {
+    const {
+        amount,
+        startDate,
+        endDate,
+        paymentMethod,
+        concept
+    } = data;
+    const existGroupClassPayment = await GroupClassPayment.findById(id);
+    if (!existGroupClassPayment) {
+        throw new Error('Group payment not found');
+    }
+    existGroupClassPayment.amount = amount;
+    existGroupClassPayment.startDate = startDate;
+    existGroupClassPayment.endDate = endDate;
+    existGroupClassPayment.paymentMethod = paymentMethod;
+    existGroupClassPayment.concept = concept;
+
+    await existGroupClassPayment.save();
+    const student = await Student.findById(existGroupClassPayment.student);
+    await updateStudentPaymentStatus(new Date, student);
+    return existGroupClassPayment;
+}
