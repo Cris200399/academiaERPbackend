@@ -125,6 +125,34 @@ router.get('/students', groupPaymentController.getAllGroupPaymentsPerStudent);
 
 /**
  * @swagger
+ * /api/group-payments/students/{studentId}:
+ *   get:
+ *     summary: Retrieve group payments for a specific student
+ *     tags: [GroupPayment]
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the student
+ *     responses:
+ *       200:
+ *         description: A list of group payments for the student
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/GroupClassPayment'
+ *       400:
+ *         description: Bad request
+ */
+router.get('/students/:studentId', groupPaymentController.getGroupPaymentsPerStudent);
+
+
+/**
+ * @swagger
  * /api/group-payments/{id}:
  *   delete:
  *     summary: Delete a group payment
@@ -143,5 +171,54 @@ router.get('/students', groupPaymentController.getAllGroupPaymentsPerStudent);
  *         description: Bad request
  */
 router.delete('/:id', groupPaymentController.deleteGroupPayment);
+
+/**
+ * @swagger
+ * /api/group-payments/{id}:
+ *   patch:
+ *     summary: Update a group payment
+ *     tags: [GroupPayment]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the group payment
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 description: The amount of the payment
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: The start date of the group class
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: The end date of the group class
+ *               paymentMethod:
+ *                 type: string
+ *                 description: The method of payment
+ *               concept:
+ *                 type: string
+ *                 description: The concept of the payment
+ *     responses:
+ *       200:
+ *         description: The group payment was successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/GroupClassPayment'
+ *       400:
+ *         description: Bad request
+ */
+router.patch('/:id', groupPaymentController.patchGroupPayment);
 
 module.exports = router;

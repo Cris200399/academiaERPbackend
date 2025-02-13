@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require("moment");
 
 /**
  * @swagger
@@ -74,6 +75,45 @@ groupClassSchema.methods.getEndTime = function () {
     const [, end] = this.schedule.split(' - ');
     return end;
 };
+
+groupClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], async function (next) {
+    try {
+        const [startStr, endStr] = this.schedule.split(' - ');
+        const startTime = moment(startStr, 'HH:mm');
+        const endTime = moment(endStr, 'HH:mm');
+
+        if (!startTime.isValid() || !endTime.isValid() || endTime.isSameOrBefore(startTime)) {
+            throw new Error('Formato de horario inválido o rango de tiempo incorrecto');
+        }
+
+        const query = {
+            daysOfWeek: {$in: this.daysOfWeek},
+            _id: {$ne: this._id} // Excluir el documento actual en actualizaciones
+        };
+
+        const overlappingGroups = await this.constructor.find(query);
+
+        for (const otherGroup of overlappingGroups) {
+            const [otherStartStr, otherEndStr] = otherGroup.schedule.split(' - ');
+            const otherStartTime = moment(otherStartStr, 'HH:mm');
+            const otherEndTime = moment(otherEndStr, 'HH:mm');
+
+            const commonDays = this.daysOfWeek.filter(day => otherGroup.daysOfWeek.includes(day));
+
+            if (commonDays.length > 0) { // Solo verificar si hay días en común
+                const overlap = !(endTime.isSameOrBefore(otherStartTime) || startTime.isSameOrAfter(otherEndTime));
+
+                if (overlap) {
+                    throw new Error(`El horario entra en conflicto con el grupo "${otherGroup.name}" en los días ${commonDays.join(', ')}`);
+                }
+            }
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
 
 
 const GroupClass = mongoose.model('Group', groupClassSchema);

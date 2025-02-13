@@ -35,3 +35,21 @@ exports.getAllGroupPaymentsPerStudent = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.patchGroupPayment = async (req, res) => {
+    try {
+        const groupPayment = await GroupPaymentService.patchGroupPayment(req.params.id, req.body);
+        res.status(200).json(groupPayment);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
+exports.getGroupPaymentsPerStudent = async (req, res) => {
+    try {
+        const groupPayments = await GroupPaymentService.getGroupPaymentsPerStudent(req.params.studentId);
+        res.status(200).json(groupPayments);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

@@ -46,7 +46,7 @@ exports.deleteGroupPayment = async (id) => {
     const existGroupClassPayment = await GroupClassPayment.findById(id);
     const student = await Student.findById(existGroupClassPayment.student);
 
-    const deletedGroupClassPayment =  await GroupClassPayment.findByIdAndDelete(id);
+    const deletedGroupClassPayment = await GroupClassPayment.findByIdAndDelete(id);
     await updateStudentPaymentStatus(new Date, student);
     return deletedGroupClassPayment;
 }
@@ -64,7 +64,21 @@ exports.getAllGroupPaymentsPerStudent = async () => {
     }));
 }
 
-exports.updateGroupPayment = async (id, data) => {
+exports.getGroupPaymentsPerStudent = async (studentId) => {
+    const student = await Student.findById(studentId, 'name lastName _id paymentStatus group');
+    if (!student) {
+        throw new Error('Student not found');
+    }
+    const groupPayments = await GroupClassPayment.find({student: studentId}, 'amount date paymentMethod startDate endDate concept');
+    const groupName = await GroupClass.findOne({_id: student.group}, 'name');
+    return {
+        ...student.toObject(),
+        group: groupName,
+        groupPayments: groupPayments
+    };
+}
+
+exports.patchGroupPayment = async (id, data) => {
     const {
         amount,
         startDate,

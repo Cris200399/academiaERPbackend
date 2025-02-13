@@ -90,15 +90,13 @@ const groupClassPaymentSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
-groupClassPaymentSchema.pre('save', async function (next) {
+groupClassPaymentSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], async function (next) {
     try {
         const pagoExistente = await this.constructor.findOne({
             student: this.student,
             _id: {$ne: this._id}, // Excluir el documento actual si es una actualización
             $or: [
-                {startDate: {$lte: this.endDate}, endDate: {$gte: this.startDate}}, // Condición de superposición
-                {startDate: {$gte: this.startDate, $lte: this.endDate}}, // Fecha de inicio dentro del rango existente
-                {endDate: {$gte: this.startDate, $lte: this.endDate}}    // Fecha de fin dentro del rango existente
+                {startDate: {$lt: this.endDate}, endDate: {$gt: this.startDate}} // Condición de CRUCE
             ]
         });
 
