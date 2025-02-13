@@ -109,6 +109,23 @@ groupClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], as
             }
         }
 
+        // Validación de cruce de horarios con CLASES PRIVADAS
+        const PrivateClass = mongoose.model('PrivateClass');
+
+        const overlappingPrivateClass = await PrivateClass.findOne({
+            date: {
+                $gte: moment(this.getStartTime(), "HH:mm").toDate(),
+                $lte: moment(this.getEndTime(), "HH:mm").toDate()
+            },
+            $or: [
+                {startTime: {$lt: this.getEndTime()}, endTime: {$gt: this.getStartTime()}}
+            ]
+        });
+
+        if (overlappingPrivateClass) {
+            throw new Error('El horario entra en conflicto con una clase privada.');
+        }
+
         next();
     } catch (error) {
         next(error);
@@ -116,5 +133,5 @@ groupClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], as
 });
 
 
-const GroupClass = mongoose.model('Group', groupClassSchema);
+const GroupClass = mongoose.model('Group', groupClassSchema); // It would be better to use 'GroupClass' instead of 'Group'
 module.exports = GroupClass;

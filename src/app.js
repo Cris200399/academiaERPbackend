@@ -4,9 +4,10 @@ const cors = require('cors');
 const groupRoutes = require('./routes/groupClassRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const assistanceRoutes = require('./routes/assistanceRoutes');
-const privateClassRoutes = require('./routes/privateClass');
+const privateClassPaymentRoutes = require('./routes/privateClassPaymentRoutes');
 const groupPaymentRoutes = require('./routes/groupPaymentRoutes');
 const paymentsReportsRoutes = require('./routes/paymentsReportsRoutes');
+const privateClassRoutes = require('./routes/privateClassRoutes');
 
 const app = express();
 
@@ -17,10 +18,11 @@ app.use(cors());
 // Routes
 app.use('/api/students', studentRoutes);
 app.use('/api/groups', groupRoutes);
-app.use('/api/private-class', privateClassRoutes);
+app.use('/api/private-class-payment', privateClassPaymentRoutes);
 app.use('/api/assistances', assistanceRoutes);
 app.use('/api/group-payments', groupPaymentRoutes);
 app.use('/api/payments-reports', paymentsReportsRoutes);
+app.use('/api/private-classes', privateClassRoutes);
 
 
 // Middleware de manejo de errores
