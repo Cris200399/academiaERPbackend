@@ -44,3 +44,12 @@ exports.deletePrivateClass = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.createPrivateClassAndCreatePayment = async (req, res) => {
+    try {
+        const newPrivateClassAndPayment = await PrivateClassService.createPrivateClassAndCreatePayment(req.body);
+        res.status(201).json(newPrivateClassAndPayment);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

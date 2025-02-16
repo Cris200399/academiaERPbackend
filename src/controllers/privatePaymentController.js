@@ -1,4 +1,4 @@
-const PrivatePaymentService = require('../services/privatePaymentService');
+const PrivatePaymentService = require('../services/privateClassPaymentService');
 
 exports.createPrivatePayment = async (req, res) => {
     try {

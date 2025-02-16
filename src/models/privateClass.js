@@ -8,11 +8,15 @@ const moment = require('moment');
  *     PrivateClass:
  *       type: object
  *       required:
+ *         - title
  *         - students
  *         - date
  *         - startTime
  *         - endTime
  *       properties:
+ *         title:
+ *           type: string
+ *           description: Title of the private class
  *         students:
  *           type: array
  *           items:
@@ -28,16 +32,30 @@ const moment = require('moment');
  *         endTime:
  *           type: string
  *           description: End time of the private class (HH:MM)
+ *         amount:
+ *           type: number
+ *           description: The amount to be paid for the private class
+ *           minimum: 0
+ *
  */
 const privateClassSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: [true, 'Title is required'],
+    },
     students: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student',
-        required: true
     }],
     date: {
         type: Date,
         required: [true, 'Date is required'],
+        validate: {
+            validator: function (value) {
+                return value >= new Date();
+            },
+            message: 'Date cannot be in the past'
+        }
     },
     startTime: {
         type: String,
@@ -57,7 +75,7 @@ privateClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], 
         const startTime = moment(this.startTime, 'HH:mm');
         const endTime = moment(this.endTime, 'HH:mm');
 
-        if (!startTime.isValid() || !endTime.isValid() || endTime.isSameOrBefore(startTime)) {
+        if (!startTime.isValid() || !endTime.isValid() || !endTime.isAfter(startTime)) {
             throw new Error('Rango de tiempo inválido.');
         }
 
@@ -66,7 +84,12 @@ privateClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], 
             date: this.date,
             _id: {$ne: this._id}, // Excluir el documento actual en actualizaciones
             $or: [
-                {startTime: {$lt: this.endTime}, endTime: {$gt: this.startTime}}
+                {
+                    $and: [
+                        {startTime: {$lt: this.endTime}},
+                        {endTime: {$gt: this.startTime}}
+                    ]
+                }
             ]
         });
 
@@ -80,40 +103,23 @@ privateClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], 
         const diaDeLaSemana = moment(this.date).locale('es').format('dddd'); // Obtener día en español
         const diaDeLaSemanaCapitalizado = diaDeLaSemana.charAt(0).toUpperCase() + diaDeLaSemana.slice(1);
 
-
         const overlappingGroupClass = await GroupClass.findOne({
-            daysOfWeek: {$in: diaDeLaSemanaCapitalizado}, // Usar día en español para la consulta
+            daysOfWeek: {$in: [diaDeLaSemanaCapitalizado]}, // Usar día en español para la consulta
             $or: [
                 {
-                    schedule: {
-                        $regex: `^${this.startTime}.*`
-                    }
-                },
-                {
-                    schedule: {
-                        $regex: `.*-${this.endTime}$`
-                    }
-                },
-                {
-                    schedule: {
-                        $regex: `.*${this.startTime}.*`
-                    }
-                },
-                {
-                    schedule: {
-                        $regex: `.*${this.endTime}.*`
-                    }
+                    $and: [
+                        {'schedule.startTime': {$lt: this.endTime}},
+                        {'schedule.endTime': {$gt: this.startTime}}
+                    ]
                 }
             ]
         });
-
-        console.log(overlappingGroupClass);
 
         if (overlappingGroupClass) {
             throw new Error('El horario entra en conflicto con una clase grupal.');
         }
 
-        // Validación de estudiantes duplicados (movida a pre('validate'))
+        // Validación de estudiantes duplicados
         if (new Set(this.students.map(String)).size !== this.students.length) {
             throw new Error('No se pueden agregar estudiantes duplicados.');
         }
