@@ -7,8 +7,7 @@ exports.createPrivateClassPayment = async (data) => {
         amount,
         date,
         privateClass,
-        paymentMethod,
-        description,
+        paymentMethod
     } = data;
 
     const newPrivateClassPayment = new PrivateClassPayment({
@@ -16,8 +15,7 @@ exports.createPrivateClassPayment = async (data) => {
         amount,
         date,
         privateClass,
-        paymentMethod,
-        description
+        paymentMethod
     });
     return newPrivateClassPayment.save();
 }

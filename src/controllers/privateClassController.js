@@ -27,6 +27,15 @@ exports.getPrivateClasses = async (req, res) => {
     }
 }
 
+exports.getPrivateClassesWithStudents = async (req, res) => {
+    try {
+        const privateClasses = await PrivateClassService.getPrivateClassesWithStudents(req.query);
+        res.status(200).json(privateClasses);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
 exports.getPrivateClassById = async (req, res) => {
     try {
         const privateClass = await PrivateClassService.getPrivateClassById(req.params.id);

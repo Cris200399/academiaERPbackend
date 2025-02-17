@@ -5,6 +5,14 @@ exports.createPrivateClass = async (data) => {
     return newPrivateClass.save();
 }
 
+exports.getPrivateClasses = async (query) => {
+    return privateClass.find(query);
+}
+
+exports.getPrivateClassesWithStudents = async (query) => {
+    return privateClass.find(query).populate('students');
+}
+
 exports.updatePrivateClass = async (id, data) => {
 
     const existingPrivateClass = await privateClass.findById(id);
@@ -19,9 +27,6 @@ exports.updatePrivateClass = async (id, data) => {
     return existingPrivateClass.save();
 }
 
-exports.getPrivateClasses = async (query) => {
-    return privateClass.find(query).populate('students');
-}
 
 exports.getPrivateClassById = async (id) => {
     return privateClass.findById(id);

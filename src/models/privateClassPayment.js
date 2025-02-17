@@ -14,8 +14,6 @@ const paymentMethods = require("../constants/paymentMethods");
  *         - date
  *         - privateClass
  *         - paymentMethod
- *         - startTime
- *         - endTime
  *       properties:
  *         student:
  *           type: string
@@ -34,20 +32,7 @@ const paymentMethods = require("../constants/paymentMethods");
  *           type: array
  *           items:
  *             type: string
- *           description: The method of payment
- *         startTime:
- *           type: string
- *           description: The start time of the private class
- *         endTime:
- *           type: string
- *           description: The end time of the private class
- *         description:
- *           type: string
- *           description: Additional details about the payment
- *         status:
- *           type: string
- *           enum: [pendiente, pagado]
- *           description: The status of the payment
+ *           description: The method(s) of payment
  */
 const privateClassPaymentSchema = new mongoose.Schema({
     student: {

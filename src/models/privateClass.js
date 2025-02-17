@@ -124,6 +124,29 @@ privateClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], 
             throw new Error('No se pueden agregar estudiantes duplicados.');
         }
 
+        // --- NUEVA VALIDACIÓN: Existencia de estudiantes ---
+        const Student = mongoose.model('Student'); // Obtén el modelo de estudiante
+
+        // 1. Convertir los IDs de estudiantes a ObjectIds si son strings
+        const studentObjectIds = this.students.map(studentId => {
+            if (typeof studentId === 'string') {
+                return new mongoose.Types.ObjectId(studentId);
+            }
+            return studentId;
+        });
+
+
+        // 2.  Validar que todos los estudiantes existan en la base de datos
+        const existingStudents = await Student.find({ _id: { $in: studentObjectIds } });
+
+        if (existingStudents.length !== this.students.length) {
+            const existingStudentIds = existingStudents.map(student => student._id.toString());
+            const nonExistentStudents = studentObjectIds.filter(studentId => !existingStudentIds.includes(studentId.toString()));
+
+            // Mejor mensaje de error con IDs de estudiantes no encontrados
+            throw new Error(`Los siguientes estudiantes no existen: ${nonExistentStudents.map(id => id.toString()).join(', ')}`);
+        }
+
         next();
     } catch (error) {
         next(error);

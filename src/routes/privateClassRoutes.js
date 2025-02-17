@@ -31,6 +31,26 @@ router.get('/', privateClassController.getPrivateClasses);
 
 /**
  * @swagger
+ * /api/private-classes/students:
+ *   get:
+ *     summary: Retrieve a list of private classes with student details
+ *     tags: [PrivateClasses]
+ *     responses:
+ *       200:
+ *         description: A list of private classes with student details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PrivateClass'
+ *       400:
+ *         description: Bad request
+ */
+router.get('/students', privateClassController.getPrivateClassesWithStudents);
+
+/**
+ * @swagger
  * /api/private-classes:
  *   post:
  *     summary: Create a new private class
@@ -52,6 +72,7 @@ router.get('/', privateClassController.getPrivateClasses);
  *         description: Bad request
  */
 router.post('/', privateClassController.createPrivateClass);
+
 
 /**
  * @swagger
