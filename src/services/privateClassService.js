@@ -1,21 +1,22 @@
-const privateClass = require("../models/privateClass");
+const PrivateClass = require("../models/privateClass");
+const {deletePrivateClassPaymentsByPrivateClassId} = require("./privateClassPaymentService");
 
 exports.createPrivateClass = async (data) => {
-    const newPrivateClass = new privateClass(data);
+    const newPrivateClass = new PrivateClass(data);
     return newPrivateClass.save();
 }
 
 exports.getPrivateClasses = async (query) => {
-    return privateClass.find(query);
+    return PrivateClass.find(query);
 }
 
 exports.getPrivateClassesWithStudents = async (query) => {
-    return privateClass.find(query).populate('students');
+    return PrivateClass.find(query).populate('students');
 }
 
 exports.updatePrivateClass = async (id, data) => {
 
-    const existingPrivateClass = await privateClass.findById(id);
+    const existingPrivateClass = await PrivateClass.findById(id);
     if (!existingPrivateClass) {
         throw new Error('Private class not found');
     }
@@ -27,11 +28,32 @@ exports.updatePrivateClass = async (id, data) => {
     return existingPrivateClass.save();
 }
 
+exports.patchPrivateClass = async (id, data) => {
+
+    const existingPrivateClass = await PrivateClass.findById(id);
+    if (!existingPrivateClass) {
+        throw new Error('Private class not found');
+    }
+
+    existingPrivateClass.title = data.title;
+    existingPrivateClass.date = data.date;
+    existingPrivateClass.startTime = data.startTime;
+    existingPrivateClass.endTime = data.endTime;
+
+    return existingPrivateClass.save();
+}
 
 exports.getPrivateClassById = async (id) => {
-    return privateClass.findById(id);
+    return PrivateClass.findById(id);
 }
 
 exports.deletePrivateClass = async (id) => {
-    return privateClass.findByIdAndDelete(id);
+    const existingPrivateClass = await PrivateClass.findById(id);
+    if (!existingPrivateClass) {
+        throw new Error('Private class not found');
+    }
+
+    await deletePrivateClassPaymentsByPrivateClassId(id);
+
+    return PrivateClass.findByIdAndDelete(id);
 }

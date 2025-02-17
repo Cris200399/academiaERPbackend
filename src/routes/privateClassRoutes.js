@@ -73,6 +73,39 @@ router.get('/students', privateClassController.getPrivateClassesWithStudents);
  */
 router.post('/', privateClassController.createPrivateClass);
 
+/**
+ * @swagger
+ * /api/private-classes/{id}:
+ *   patch:
+ *     summary: Partially update a private class by ID
+ *     tags: [PrivateClasses]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the private class
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PrivateClass'
+ *     responses:
+ *       200:
+ *         description: Private class successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PrivateClass'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Private class not found
+ */
+router.patch('/:id', privateClassController.patchPrivateClass);
+
 
 /**
  * @swagger
@@ -100,6 +133,29 @@ router.post('/', privateClassController.createPrivateClass);
  *         description: Private class not found
  */
 router.get('/:id', privateClassController.getPrivateClassById);
+
+/**
+ * @swagger
+ * /api/private-classes/{id}:
+ *   delete:
+ *     summary: Delete a private class by ID
+ *     tags: [PrivateClasses]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the private class
+ *     responses:
+ *       200:
+ *         description: Private class successfully deleted
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Private class not found
+ */
+router.delete('/:id', privateClassController.deletePrivateClass);
 
 
 module.exports = router;
