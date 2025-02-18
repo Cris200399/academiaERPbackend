@@ -1,26 +1,65 @@
 const PaymentsReportsService = require('../services/paymentsReportsService');
 
-exports.get3LatestMonthsPayments = async (req, res) => {
+// Group payments reports
+exports.get3LatestMonthsGroupsPayments = async (req, res) => {
     try {
-        const payments = await PaymentsReportsService.get3MonthsReportPayments();
+        const payments = await PaymentsReportsService.get3MonthsGroupsReportPayments();
         res.status(200).json(payments);
     } catch (error) {
         res.status(400).json({message: error.message});
     }
 }
 
-exports.getTotalPaymentsForActualMonth = async (req, res) => {
+exports.getTotalGroupsPaymentsForActualMonth = async (req, res) => {
     try {
-        const payments = await PaymentsReportsService.getTotalPaymentsForActualMonth();
+        const payments = await PaymentsReportsService.getTotalGroupsPaymentsForActualMonth();
         res.status(200).json(payments);
     } catch (error) {
         res.status(400).json({message: error.message});
     }
 }
 
-exports.getTotalPaymentsForAMonth = async (req, res) => {
+exports.getTotalGroupsPaymentsForAMonth = async (req, res) => {
     try {
-        const payments = await PaymentsReportsService.getTotalPaymentsForAMonth(parseInt(req.params.month));
+        const payments = await PaymentsReportsService.getTotalGroupsPaymentsForAMonth(parseInt(req.params.month));
+        res.status(200).json(payments);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
+// Private class payments reports
+
+exports.get3LatestMonthsPrivateClassesPayments = async (req, res) => {
+    try {
+        const payments = await PaymentsReportsService.get3MonthsPrivateReportPayments();
+        res.status(200).json(payments);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
+exports.getTotalPrivateClassesPaymentsForActualMonth = async (req, res) => {
+    try {
+        const payments = await PaymentsReportsService.getTotalPrivatePaymentsForActualMonth();
+        res.status(200).json(payments);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
+exports.getTotalPrivatePaymentsForLastMonth = async (req, res) => {
+    try {
+        const payments = await PaymentsReportsService.getTotalPrivatePaymentsForLastMonth();
+        res.status(200).json(payments);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
+exports.getTotalPrivateClassesPaymentsForAMonth = async (req, res) => {
+    try {
+        const payments = await PaymentsReportsService.getTotalPrivatePaymentsForAMonth(parseInt(req.params.month));
         res.status(200).json(payments);
     } catch (error) {
         res.status(400).json({message: error.message});

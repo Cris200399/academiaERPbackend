@@ -1,63 +1,125 @@
 const GroupClassPayment = require('../models/groupClassPayment');
 
-exports.get3MonthsReportPayments = async () => {
+const PrivateClassPayment = require('../models/privateClassPayment');
+
+// Group payments reports
+exports.get3MonthsGroupsReportPayments = async () => {
     const today = new Date();
     const threeMonthsAgo = new Date(today.setMonth(today.getMonth() - 3));
     const payments = await GroupClassPayment.aggregate([
-        { $match: { date: { $gte: threeMonthsAgo } } },
+        {$match: {date: {$gte: threeMonthsAgo}}},
         {
             $group: {
-                _id: { $month: "$date" },
-                totalPayments: { $sum: "$amount" }
+                _id: {$month: "$date"},
+                totalPayments: {$sum: "$amount"}
             }
         },
-        { $sort: { _id: 1 } }
+        {$sort: {_id: 1}}
     ]);
     return payments;
 }
 
-exports.getTotalPaymentsForLastMonth = async () => {
+exports.getTotalGroupPaymentsForLastMonth = async () => {
     const today = new Date();
     const lastMonth = new Date(today.setMonth(today.getMonth() - 1));
     const payments = await GroupClassPayment.aggregate([
-        { $match: { date: { $gte: lastMonth } } },
+        {$match: {date: {$gte: lastMonth}}},
         {
             $group: {
                 _id: null,
-                totalPayments: { $sum: "$amount" }
+                totalPayments: {$sum: "$amount"}
             }
         }
     ]);
     return payments;
 }
 
-exports.getTotalPaymentsForActualMonth = async () => {
+exports.getTotalGroupsPaymentsForActualMonth = async () => {
     const today = new Date();
     const actualMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const payments = await GroupClassPayment.aggregate([
-        { $match: { date: { $gte: actualMonth } } },
+        {$match: {date: {$gte: actualMonth}}},
         {
             $group: {
                 _id: null,
-                totalPayments: { $sum: "$amount" }
+                totalPayments: {$sum: "$amount"}
             }
         }
     ]);
     return payments[0];
 }
 
-exports.getTotalPaymentsForAMonth = async (month) => {
+exports.getTotalGroupsPaymentsForAMonth = async (month) => {
     const today = new Date();
     const actualMonth = new Date(today.getFullYear(), month, 1);
     const nextMonth = new Date(today.getFullYear(), month + 1, 1);
     const payments = await GroupClassPayment.aggregate([
-        { $match: { date: { $gte: actualMonth, $lt: nextMonth } } },
+        {$match: {date: {$gte: actualMonth, $lt: nextMonth}}},
         {
             $group: {
                 _id: null,
-                totalPayments: { $sum: "$amount" }
+                totalPayments: {$sum: "$amount"}
             }
         }
     ]);
-    return payments[0] ? payments[0] : { totalPayments: 0 };
+    return payments[0] ? payments[0] : {totalPayments: 0};
+}
+
+// Private payments reports
+exports.get3MonthsPrivateReportPayments = async () => {
+    const today = new Date();
+    const threeMonthsAgo = new Date(today.setMonth(today.getMonth() - 3));
+    return PrivateClassPayment.aggregate([
+        {$match: {date: {$gte: threeMonthsAgo}}},
+        {
+            $group: {
+                _id: {$month: "$date"},
+                totalPayments: {$sum: "$amount"}
+            }
+        },
+        {$sort: {_id: 1}}
+    ]);
+}
+
+exports.getTotalPrivatePaymentsForLastMonth = async () => {
+    const today = new Date();
+    const lastMonth = new Date(today.setMonth(today.getMonth() - 1));
+    return PrivateClassPayment.aggregate([
+        {$match: {date: {$gte: lastMonth}}},
+        {
+            $group: {
+                _id: null,
+                totalPayments: {$sum: "$amount"}
+            }
+        }
+    ]);
+}
+
+exports.getTotalPrivatePaymentsForActualMonth = async () => {
+    const today = new Date();
+    const actualMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    return PrivateClassPayment.aggregate([
+        {$match: {date: {$gte: actualMonth}}},
+        {
+            $group: {
+                _id: null,
+                totalPayments: {$sum: "$amount"}
+            }
+        }
+    ]);
+}
+
+exports.getTotalPrivatePaymentsForAMonth = async (month) => {
+    const today = new Date();
+    const actualMonth = new Date(today.getFullYear(), month, 1);
+    const nextMonth = new Date(today.getFullYear(), month + 1, 1);
+    return PrivateClassPayment.aggregate([
+        {$match: {date: {$gte: actualMonth, $lt: nextMonth}}},
+        {
+            $group: {
+                _id: null,
+                totalPayments: {$sum: "$amount"}
+            }
+        }
+    ]);
 }
