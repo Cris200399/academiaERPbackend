@@ -109,6 +109,35 @@ router.patch('/:id', privateClassController.patchPrivateClass);
 
 /**
  * @swagger
+ * /api/private-classes/{privateClassId}/student/{studentId}:
+ *   patch:
+ *     summary: Add a student to a private class
+ *     tags: [PrivateClasses]
+ *     parameters:
+ *       - in: path
+ *         name: privateClassId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the private class
+ *       - in: path
+ *         name: studentId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the student to add
+ *     responses:
+ *       204:
+ *         description: Student successfully added to private class
+ *       400:
+ *         description: Bad request or student already in class
+ *       404:
+ *         description: Private class not found
+ */
+router.patch('/:privateClassId/student/:studentId', privateClassController.addStudentToPrivateClass);
+
+/**
+ * @swagger
  * /api/private-classes/{id}:
  *   get:
  *     summary: Retrieve a single private class by ID

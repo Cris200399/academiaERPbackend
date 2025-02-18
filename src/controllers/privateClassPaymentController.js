@@ -17,3 +17,12 @@ exports.getPrivatePayments = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.deletePrivatePayment = async (req, res) => {
+    try {
+        await PrivatePaymentService.deletePrivateClassPayment(req.params.id);
+        res.status(204).end();
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

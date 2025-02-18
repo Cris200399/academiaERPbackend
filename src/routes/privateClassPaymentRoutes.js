@@ -92,4 +92,25 @@ router.post('/', PrivateClassPaymentController.createPrivatePayment);
  */
 router.get('/', PrivateClassPaymentController.getPrivatePayments);
 
+/**
+ * @swagger
+ * /api/private-class-payments/{id}:
+ *   delete:
+ *     summary: Delete a private class payment by ID
+ *     tags: [PrivateClassPayments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the private class payment
+ *     responses:
+ *       204:
+ *         description: Private class payment successfully deleted
+ *       400:
+ *         description: Bad request
+ */
+router.delete('/:id', PrivateClassPaymentController.deletePrivatePayment);
+
 module.exports = router;

@@ -1,4 +1,5 @@
 const PrivateClassPayment = require("../models/privateClassPayment");
+const PrivateClass = require("../models/privateClass");
 
 
 exports.createPrivateClassPayment = async (data) => {
@@ -25,6 +26,21 @@ exports.getPrivateClassPayments = async (query) => {
 }
 
 exports.deletePrivateClassPayment = async (id) => {
+    const existingPrivateClassPayment = await PrivateClassPayment.findById(id);
+    if (!existingPrivateClassPayment) {
+        throw new Error('Private class payment not found');
+    }
+
+    const existingPrivateClass = await PrivateClass.findById(existingPrivateClassPayment.privateClass);
+    if (existingPrivateClass) {
+        // Remove the student from the private class
+        existingPrivateClass.students = existingPrivateClass.students.filter(
+            studentId => studentId.toString() !== existingPrivateClassPayment.student.toString()
+        );
+        await existingPrivateClass.save();
+    }
+
+
     return PrivateClassPayment.findByIdAndDelete(id);
 }
 

@@ -38,4 +38,31 @@ const PrivateClassAndPayments = require("../controllers/privateClassAndPaymentCo
  */
 router.get('/', PrivateClassAndPayments.getPrivateClassAndTheirPayments);
 
+/**
+ * @swagger
+ * /api/private-class-and-payments/coming:
+ *   get:
+ *     summary: Retrieve upcoming private classes and their payments
+ *     tags: [PrivateClassAndPayment]
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: object
+ *         required: false
+ *         description: Query parameters to filter upcoming private classes
+ *     responses:
+ *       200:
+ *         description: A list of upcoming private classes and their payments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       400:
+ *         description: Bad request
+ */
+router.get('/coming', PrivateClassAndPayments.getComingPrivateClassAndTheirPayments);
+
 module.exports = router;

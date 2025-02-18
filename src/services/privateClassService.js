@@ -57,3 +57,18 @@ exports.deletePrivateClass = async (id) => {
 
     return PrivateClass.findByIdAndDelete(id);
 }
+
+
+exports.addStudentToPrivateClass = async (privateClassId, studentId) => {
+    const privateClass = await PrivateClass.findById(privateClassId);
+    if (!privateClass) {
+        throw new Error('Private class not found');
+    }
+
+    if (privateClass.students.includes(studentId)) {
+        throw new Error('Student already added to private class');
+    }
+
+    privateClass.students.push(studentId);
+    return privateClass.save();
+}

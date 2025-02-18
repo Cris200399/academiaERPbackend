@@ -71,3 +71,12 @@ exports.createPrivateClassAndCreatePayment = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+exports.addStudentToPrivateClass = async (req, res) => {
+    try {
+        await PrivateClassService.addStudentToPrivateClass(req.params.privateClassId, req.params.studentId);
+        res.status(204).end();
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}

@@ -52,9 +52,15 @@ const privateClassSchema = new mongoose.Schema({
         required: [true, 'Date is required'],
         validate: {
             validator: function (value) {
-                return value >= new Date();
+                if (!this.startTime) return false; // Asegurar que startTime está presente
+
+                // Combinar fecha y hora de startTime
+                const combinedDateTime = moment(`${moment(value).format('YYYY-MM-DD')} ${this.startTime}`, 'YYYY-MM-DD HH:mm');
+                const now = moment();
+
+                return combinedDateTime.isSameOrAfter(now);
             },
-            message: 'Date cannot be in the past'
+            message: 'Date and time cannot be in the past'
         }
     },
     startTime: {
@@ -137,7 +143,7 @@ privateClassSchema.pre(['save', 'updateOne', 'updateMany', 'findOneAndUpdate'], 
 
 
         // 2.  Validar que todos los estudiantes existan en la base de datos
-        const existingStudents = await Student.find({ _id: { $in: studentObjectIds } });
+        const existingStudents = await Student.find({_id: {$in: studentObjectIds}});
 
         if (existingStudents.length !== this.students.length) {
             const existingStudentIds = existingStudents.map(student => student._id.toString());
