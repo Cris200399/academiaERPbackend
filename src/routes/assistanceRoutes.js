@@ -9,6 +9,7 @@ const {
     deleteAssistance,
     getAssistancesPerStudentId
 } = require('../controllers/assistanceController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ const router = express.Router();
  *   name: Assistance
  *   description: Assistance management
  */
+
 
 /**
  * @swagger
@@ -43,25 +45,30 @@ const router = express.Router();
  */
 router.post('/', createAssistance);
 
+
 /**
  * @swagger
  * /api/assistances:
  *   get:
- *     summary: Retrieve a list of assistances
+ *     summary: Get all assistances (Protected Route)
  *     tags: [Assistance]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: A list of assistances
+ *         description: List of all assistances retrieved successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Assistance'
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
  *       400:
  *         description: Bad request
  */
-router.get('/', getAssistances);
+router.get('/', authMiddleware, getAssistances);
 
 /**
  * @swagger

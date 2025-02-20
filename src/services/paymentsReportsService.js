@@ -98,7 +98,7 @@ exports.getTotalPrivatePaymentsForLastMonth = async () => {
 exports.getTotalPrivatePaymentsForActualMonth = async () => {
     const today = new Date();
     const actualMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    return PrivateClassPayment.aggregate([
+    const payments = await PrivateClassPayment.aggregate([
         {$match: {date: {$gte: actualMonth}}},
         {
             $group: {
@@ -107,13 +107,14 @@ exports.getTotalPrivatePaymentsForActualMonth = async () => {
             }
         }
     ]);
+    return payments[0];
 }
 
 exports.getTotalPrivatePaymentsForAMonth = async (month) => {
     const today = new Date();
     const actualMonth = new Date(today.getFullYear(), month, 1);
     const nextMonth = new Date(today.getFullYear(), month + 1, 1);
-    return PrivateClassPayment.aggregate([
+    const payments = await PrivateClassPayment.aggregate([
         {$match: {date: {$gte: actualMonth, $lt: nextMonth}}},
         {
             $group: {
@@ -122,4 +123,5 @@ exports.getTotalPrivatePaymentsForAMonth = async (month) => {
             }
         }
     ]);
+    return payments[0] ? payments[0] : {totalPayments: 0};
 }
