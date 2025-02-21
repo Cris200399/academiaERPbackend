@@ -1,5 +1,5 @@
 const express = require('express');
-const {register, login, logout, getMe} = require('../controllers/authController');
+const {register, login, logout, getMe, createUser} = require('../controllers/authController');
 
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -114,5 +114,35 @@ router.get('/me', authMiddleware, getMe);
  *         description: Not authenticated
  */
 router.post('/logout', logout);
+
+/**
+ * @swagger
+ * /api/auth/create-user:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *       400:
+ *         description: Bad request or insufficient permissions
+ */
+router.post('/create-user', authMiddleware, authMiddleware.checkRole('superuser', 'admin'), createUser);
+
 
 module.exports = router;

@@ -11,3 +11,13 @@ module.exports = (req, res, next) => {
         res.status(401).json({ message: 'Token inválido' });
     }
 };
+
+// Middleware para verificar roles
+module.exports.checkRole = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: 'No tienes permisos para esta acción' });
+        }
+        next();
+    };
+};
