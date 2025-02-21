@@ -13,8 +13,12 @@ const {
     getTodayGroupActivities,
     getWeekGroupActivities
 } = require('../controllers/groupClassController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
+
+// Protección de rutas
+router.use(authMiddleware);
 
 /**
  * @swagger
@@ -29,6 +33,8 @@ const router = express.Router();
  *   get:
  *     summary: Retrieve a list of groups
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of groups
@@ -47,6 +53,8 @@ router.get('/', getGroups);
  *   post:
  *     summary: Create a new group
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -71,6 +79,8 @@ router.post('/', createGroup);
  *   get:
  *     summary: Retrieve today's group activities
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of today's group activities
@@ -112,6 +122,8 @@ router.get('/week', getWeekGroupActivities);
  *   get:
  *     summary: Retrieve a list of groups when there are available spots
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of available groups
@@ -133,6 +145,8 @@ router.get('/available', getAvailableGroups);
  *   get:
  *     summary: Retrieve a list of groups that are in progress
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of groups in progress
@@ -153,6 +167,8 @@ router.get('/in-progress', getGroupInProgress);
  *   get:
  *     summary: Retrieve a group with its members
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -181,6 +197,8 @@ router.get('/:id/members', getGroupWithMembers);
  *   delete:
  *     summary: Delete a group
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -204,6 +222,8 @@ router.delete('/:id', deleteGroup);
  *   put:
  *     summary: Update an existing group
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -237,6 +257,8 @@ router.put('/:id', updateGroup);
  *   put:
  *     summary: Update group information
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -271,6 +293,8 @@ router.put('/:id/info', updateGroupInfo);
  *   post:
  *     summary: Add a student to a group
  *     tags: [Groups]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: groupId

@@ -13,6 +13,9 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+// Protección de rutas
+router.use(authMiddleware);
+
 /**
  * @swagger
  * tags:
@@ -27,6 +30,8 @@ const router = express.Router();
  *   post:
  *     summary: Create a new assistance
  *     tags: [Assistance]
+ *     security:
+ *      - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -68,7 +73,7 @@ router.post('/', createAssistance);
  *       400:
  *         description: Bad request
  */
-router.get('/', authMiddleware, getAssistances);
+router.get('/', getAssistances);
 
 /**
  * @swagger
@@ -76,6 +81,8 @@ router.get('/', authMiddleware, getAssistances);
  *   get:
  *     summary: Retrieve today's assistance per student
  *     tags: [Assistance]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: studentId
@@ -110,6 +117,8 @@ router.get('/today', getTodayAssistancePerStudent);
  *   delete:
  *     summary: Delete an assistance
  *     tags: [Assistance]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -133,6 +142,8 @@ router.delete('/:id', deleteAssistance);
  *   put:
  *     summary: Update an existing assistance
  *     tags: [Assistance]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -166,6 +177,8 @@ router.put('/:id', updateAssistance);
  *   patch:
  *     summary: Update the status of an assistance
  *     tags: [Assistance]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -203,6 +216,8 @@ router.patch('/:id/status', patchAssistanceStatus);
  *   get:
  *     summary: Retrieve assistances for a specific student
  *     tags: [Assistance]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: studentId

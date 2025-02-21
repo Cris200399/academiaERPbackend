@@ -3,6 +3,9 @@ const multer = require('multer');
 
 const StudentController = require('../controllers/studentController');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
+
 
 const router = express.Router();
 
@@ -21,6 +24,9 @@ const upload = multer({
         }
     }
 });
+
+// Protección de rutas
+router.use(authMiddleware);
 
 /**
  * @swagger
@@ -463,7 +469,6 @@ router.put('/:studentId/document', upload.single('document'), StudentController.
  *         description: Internal server error
  */
 router.get('/:studentId/document', StudentController.getDocumentFile);
-
 
 
 module.exports = router;

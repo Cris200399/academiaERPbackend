@@ -10,15 +10,16 @@ const options = {
         },
         components: {
             securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT'
+                cookieAuth: {
+                    type: 'apiKey',
+                    in: 'cookie',
+                    name: 'authToken', // Nombre de la cookie donde se guarda el token
+                    description: 'JWT almacenado en cookies httpOnly'
                 }
             }
         },
         security: [{
-            bearerAuth: []
+            cookieAuth: []
         }]
     },
     apis: ['./src/routes/*.js', './src/models/*.js', './src/dtos/*.js'],

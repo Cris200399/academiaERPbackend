@@ -2,7 +2,11 @@ const express = require('express');
 
 const privateClassController = require('../controllers/privateClassController');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
 const router = express.Router();
+// Protección de rutas
+router.use(authMiddleware);
 
 /**
  * @swagger

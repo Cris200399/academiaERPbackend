@@ -1,5 +1,7 @@
 const express = require('express');
-const {register, login} = require('../controllers/authController');
+const {register, login, logout, getMe} = require('../controllers/authController');
+
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -75,5 +77,42 @@ router.post('/register', register);
  *         description: Invalid credentials
  */
 router.post('/login', login);
+
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Get current user's profile
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Not authenticated
+ */
+router.get('/me', authMiddleware, getMe);
+
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     tags: [Authentication]
+ *     security:
+ *      - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ *       401:
+ *         description: Not authenticated
+ */
+router.post('/logout', logout);
 
 module.exports = router;

@@ -2,7 +2,12 @@ const express = require('express');
 
 const groupPaymentController = require('../controllers/groupPaymentController');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
 const router = express.Router();
+
+// Protección de rutas
+router.use(authMiddleware);
 
 /**
  * @swagger
