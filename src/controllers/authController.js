@@ -58,13 +58,5 @@ exports.getMe = async (req, res) => {
     }
 }
 
-exports.createUser = async (req, res) => {
-    try {
-        const newUser = await authService.createUser(req.user.id, req.body);
-        res.status(201).json({ message: 'Usuario creado con éxito', userId: newUser._id });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
 
 

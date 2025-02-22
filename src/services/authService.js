@@ -26,31 +26,6 @@ exports.login = async ({email, password}) => {
     return {user, token};
 };
 
-exports.createUser = async (creatorId, userData) => {
-    const creator = await User.findById(creatorId);
-    if (!creator) throw new Error('Usuario creador no encontrado');
-
-    let newRole;
-    if (creator.role === 'superuser') {
-        newRole = 'admin';  // Solo un superusuario puede crear admins
-    } else if (creator.role === 'admin') {
-        newRole = 'subuser'; // Solo un admin puede crear subusuarios
-    } else {
-        throw new Error('No tienes permisos para crear usuarios');
-    }
-
-    const user = new User({
-        name: userData.name,
-        email: userData.email,
-        password: userData.password,
-        role: newRole,
-        createdBy: creatorId
-    });
-
-    await user.save();
-    return user;
-};
-
 
 exports.getMe = async (userId) => {
     const user = await User.findById(userId).select('-password'); // No enviamos la contraseña

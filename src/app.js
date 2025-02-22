@@ -13,6 +13,7 @@ const paymentsReportsRoutes = require('./routes/paymentsReportsRoutes');
 const privateClassRoutes = require('./routes/privateClassRoutes');
 const privateClassAndPaymentRoutes = require('./routes/privateClassAndPaymentRoutes');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/payments-reports', paymentsReportsRoutes);
 app.use('/api/private-classes', privateClassRoutes);
 app.use('/api/private-class-and-payments', privateClassAndPaymentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 
 // Middleware de manejo de errores

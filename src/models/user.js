@@ -38,18 +38,18 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: {
         type: String,
-        enum: ['superuser', 'admin', 'subuser'],
+        enum: ['superuser', 'admin', 'user'],
         required: true,
-        default: 'subuser'
+        default: 'user'
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: false
-    } // Este campo indica quién creó la cuenta (para admins y subusers)
+    }
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre(['save', 'findByIdAndUpdate'], async function (next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 10);
     next();
