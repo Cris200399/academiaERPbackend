@@ -23,14 +23,26 @@ exports.login = async ({email, password}) => {
 
     const token = generateToken(user);
 
-    return {user, token};
+    return {
+        user: {
+            id: user._id,
+            name: user.name,
+            role: user.role,
+            email: user.email
+        }, token
+    };
 };
 
 
 exports.getMe = async (userId) => {
     const user = await User.findById(userId).select('-password'); // No enviamos la contraseña
     if (!user) throw new Error('Usuario no encontrado');
-    return user;
+    return {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        email: user.email
+    };
 }
 
 const generateToken = (user) => {

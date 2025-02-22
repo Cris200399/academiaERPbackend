@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
             maxAge: 3600000
         });
 
-        res.json({user: {id: user._id, name: user.name, rol: user.rol, email: user.email}});
+        res.json({user: user});
     } catch (error) {
         res.status(401).json({message: error.message});
     }

@@ -1,8 +1,11 @@
 const express = require('express');
 
 const userController = require('../controllers/userController');
+const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 /**
  * @swagger
@@ -36,7 +39,7 @@ const router = express.Router();
  *       400:
  *         description: Bad request
  */
-router.post('/', userController.createUser);
+router.post('/', authMiddleware.checkRole('superuser', 'admin'), userController.createUser);
 
 /**
  * @swagger
@@ -64,6 +67,33 @@ router.post('/', userController.createUser);
  *                     type: string
  */
 router.get('/', userController.getUsers);
+
+/**
+ * @swagger
+ * /api/users/admins:
+ *   get:
+ *     summary: Retrieve a list of admins
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: A list of admins
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   role:
+ *                     type: string
+ */
+router.get('/admins', userController.getAdmins);
 
 /**
  * @swagger
@@ -123,8 +153,6 @@ router.get('/:userId', userController.getUser);
  *                 type: string
  *               email:
  *                 type: string
- *               password:
- *                 type: string
  *     responses:
  *       200:
  *         description: User updated successfully
@@ -134,6 +162,40 @@ router.get('/:userId', userController.getUser);
  *         description: Internal server error
  */
 router.put('/:userId', userController.updateUser);
+
+/**
+ * @swagger
+ * /api/users/{userId}/password:
+ *   patch:
+ *     summary: Update a user's password
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+router.patch('/:userId/password', userController.patchPassword);
 
 /**
  * @swagger

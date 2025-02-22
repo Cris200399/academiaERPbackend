@@ -1,6 +1,5 @@
 const User = require("../models/user");
 
-
 exports.createUser = async (creatorId, userData) => {
     const creator = await User.findById(creatorId);
     if (!creator) throw new Error('Usuario creador no encontrado');
@@ -36,9 +35,31 @@ exports.getUser = async (userId) => {
     return User.findById(userId, {password: 0});
 }
 
+exports.getAdmins = async () => {
+    return User.find({
+        role: 'admin'
+    }, {password: 0});
+}
+
 exports.updateUser = async (userId, userData) => {
+    delete userData.password;
     return User.findByIdAndUpdate(userId, userData, {new: true});
 }
+
+exports.patchPassword = async (userId, currentPassword, newPassword) => {
+    const user = await User.findById(userId);
+    if (!user) throw new Error('Usuario no encontrado');
+
+    // Verificar contraseña actual
+    const isValidPassword = await user.comparePassword(currentPassword);
+    if (!isValidPassword) throw new Error('Contraseña actual incorrecta');
+
+    // Actualizar a nueva contraseña
+    user.password = newPassword;
+    await user.save();
+
+    return {message: 'Contraseña actualizada con éxito'};
+};
 
 exports.deleteUser = async (userId) => {
     const user = await User.findById(userId);
