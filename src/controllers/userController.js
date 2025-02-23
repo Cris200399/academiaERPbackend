@@ -11,7 +11,7 @@ exports.createUser = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
     try {
-        const users = await UserService.getUsers();
+        const users = await UserService.getUsers(req.user);
         res.json(users);
     } catch (error) {
         res.status(500).json({message: error.message});
@@ -38,7 +38,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-        await UserService.deleteUser(req.params.userId);
+        await UserService.deleteUser(req.user, req.params.userId);
         res.json({message: 'Usuario eliminado con éxito'});
     } catch (error) {
         res.status(500).json({message: error.message});
@@ -47,7 +47,7 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAdmins = async (req, res) => {
     try {
-        const admins = await UserService.getAdmins();
+        const admins = await UserService.getAdmins(req.user);
         res.json(admins);
     } catch (error) {
         res.status(500).json({message: error.message});

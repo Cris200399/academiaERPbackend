@@ -6,9 +6,9 @@ exports.createUser = async (creatorId, userData) => {
 
     let newRole;
     if (creator.role === 'superuser') {
-        newRole = 'admin';  // Solo un superusuario puede crear admins
+        newRole = userData.role || 'admin'; // Un superuser o admin puede crear admin o user
     } else if (creator.role === 'admin') {
-        newRole = 'user'; // Solo un admin puede crear users
+        newRole = userData.role || 'user'; // Un superuser o admin puede crear admin o user
     } else {
         throw new Error('No tienes permisos para crear usuarios');
     }
@@ -25,8 +25,9 @@ exports.createUser = async (creatorId, userData) => {
     return user;
 };
 
-exports.getUsers = async () => {
+exports.getUsers = async (user) => {
     return User.find({
+        _id: {$ne: user.id},
         role: 'user'
     }, {password: 0});
 }
@@ -35,8 +36,9 @@ exports.getUser = async (userId) => {
     return User.findById(userId, {password: 0});
 }
 
-exports.getAdmins = async () => {
+exports.getAdmins = async (user) => {
     return User.find({
+        _id: {$ne: user.id},
         role: 'admin'
     }, {password: 0});
 }
@@ -61,8 +63,9 @@ exports.patchPassword = async (userId, currentPassword, newPassword) => {
     return {message: 'Contraseña actualizada con éxito'};
 };
 
-exports.deleteUser = async (userId) => {
+exports.deleteUser = async (userWhoWantDelete, userId) => {
     const user = await User.findById(userId);
+    if (userWhoWantDelete.role === 'user') throw new Error('No tienes permisos para eliminar usuarios');
     if (!user) throw new Error('Usuario no encontrado');
     if (user.role === 'superuser') throw new Error('No puedes eliminar un superusuario');
     return User.findByIdAndDelete(userId);

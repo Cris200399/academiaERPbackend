@@ -33,7 +33,8 @@ exports.login = async (req, res) => {
 
         res.cookie('authToken', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            // secure: process.env.NODE_ENV === 'production',
+            secure: true,
             sameSite: 'Strict',
             maxAge: 3600000
         });
@@ -45,7 +46,12 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-    res.clearCookie('authToken', {httpOnly: true, sameSite: 'Strict', secure: process.env.NODE_ENV === 'production'});
+    res.clearCookie('authToken', {
+        httpOnly: true,
+        sameSite: 'Strict',
+        // secure: process.env.NODE_ENV === 'production'
+        secure: true
+    });
     res.json({message: 'Sesión cerrada correctamente'});
 }
 
