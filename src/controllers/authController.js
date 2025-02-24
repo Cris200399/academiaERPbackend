@@ -4,59 +4,34 @@ exports.register = async (req, res) => {
     try {
         const {user, token} = await authService.register(req.body);
 
-        // Configurar la cookie con el token
-        res.cookie('authToken', token, {
-            httpOnly: true,
-            // secure: process.env.NODE_ENV === 'production',
-            secure: true,
-            domain: 'https://iridescent-mousse-e5cc8b.netlify.app',
-            sameSite: 'None',
-            maxAge: 3600000 // 1 hora
-        });
-
-        // Devolver datos del usuario sin información sensible
+        // Enviar el token en la respuesta
         res.status(201).json({
             user: {
                 id: user._id,
                 name: user.name,
                 role: user.role,
                 email: user.email
-            }
+            },
+            token
         });
     } catch (error) {
         res.status(400).json({message: error.message});
     }
 };
 
-
 exports.login = async (req, res) => {
     try {
         const {user, token} = await authService.login(req.body);
 
-        res.cookie('authToken', token, {
-            httpOnly: true,
-            // secure: process.env.NODE_ENV === 'production',
-            secure: true,
-            domain: 'https://iridescent-mousse-e5cc8b.netlify.app',
-            sameSite: 'None',
-            maxAge: 3600000
+        // Enviar el token en la respuesta JSON
+        res.json({
+            user: user,
+            token
         });
-
-        res.json({user: user});
     } catch (error) {
         res.status(401).json({message: error.message});
     }
 };
-
-exports.logout = async (req, res) => {
-    res.clearCookie('authToken', {
-        httpOnly: true,
-        sameSite: 'None',
-        // secure: process.env.NODE_ENV === 'production'
-        secure: true
-    });
-    res.json({message: 'Sesión cerrada correctamente'});
-}
 
 exports.getMe = async (req, res) => {
     try {
@@ -65,4 +40,4 @@ exports.getMe = async (req, res) => {
     } catch (error) {
         res.status(400).json({message: error.message});
     }
-}
+};

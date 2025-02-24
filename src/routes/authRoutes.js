@@ -13,7 +13,6 @@ const router = express.Router();
  *   description: User authentication and registration
  */
 
-
 /**
  * @swagger
  * /api/auth/register:
@@ -78,7 +77,6 @@ router.post('/register', register);
  */
 router.post('/login', login);
 
-
 /**
  * @swagger
  * /api/auth/me:
@@ -98,23 +96,5 @@ router.post('/login', login);
  *         description: Not authenticated
  */
 router.get('/me', authMiddleware, getMe);
-
-/**
- * @swagger
- * /api/auth/logout:
- *   post:
- *     summary: Logout user
- *     tags: [Authentication]
- *     security:
- *      - cookieAuth: []
- *     responses:
- *       200:
- *         description: Logged out successfully
- *       401:
- *         description: Not authenticated
- */
-router.post('/logout', logout);
-
-
 
 module.exports = router;

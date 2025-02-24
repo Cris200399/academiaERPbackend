@@ -7,20 +7,23 @@ const options = {
         info: {
             title: 'API Documentation',
             version: '1.0.0',
+            description: 'Documentación de la API con autenticación por token Bearer.'
         },
         components: {
             securitySchemes: {
-                cookieAuth: {
-                    type: 'apiKey',
-                    in: 'cookie',
-                    name: 'authToken', // Nombre de la cookie donde se guarda el token
-                    description: 'JWT almacenado en cookies httpOnly'
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    description: 'Introduce tu token JWT en el campo de autorización.'
                 }
             }
         },
-        security: [{
-            cookieAuth: []
-        }]
+        security: [
+            {
+                bearerAuth: []
+            }
+        ]
     },
     apis: ['./src/routes/*.js', './src/models/*.js', './src/dtos/*.js'],
 };

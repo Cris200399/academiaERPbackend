@@ -1,14 +1,19 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-    const token = req.cookies.authToken; // Obtener el token desde las cookies
-    if (!token) return res.status(401).json({ message: 'No autorizado' });
+    // Obtener el token desde los encabezados
+    const authHeader = req.headers.authorization;
 
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({message: 'No autorizado'});
+    }
+    const token = authHeader.split(' ')[1]; // Extraer el token después de "Bearer"
     try {
-        req.user = jwt.verify(token, process.env.JWT_SECRET); // Guardamos los datos del usuario en la request
+        // Verificar el token con la clave secreta
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
         next();
     } catch (error) {
-        res.status(401).json({ message: 'Token inválido' });
+        res.status(403).json({message: 'Token inválido'});
     }
 };
 
@@ -16,7 +21,7 @@ module.exports = (req, res, next) => {
 module.exports.checkRole = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ message: 'No tienes permisos para esta acción' });
+            return res.status(403).json({message: 'No tienes permisos para esta acción'});
         }
         next();
     };
