@@ -9,6 +9,7 @@ exports.register = async (req, res) => {
             httpOnly: true,
             // secure: process.env.NODE_ENV === 'production',
             secure: true,
+            domain: 'https://iridescent-mousse-e5cc8b.netlify.app',
             sameSite: 'None',
             maxAge: 3600000 // 1 hora
         });
@@ -36,6 +37,7 @@ exports.login = async (req, res) => {
             httpOnly: true,
             // secure: process.env.NODE_ENV === 'production',
             secure: true,
+            domain: 'https://iridescent-mousse-e5cc8b.netlify.app',
             sameSite: 'None',
             maxAge: 3600000
         });

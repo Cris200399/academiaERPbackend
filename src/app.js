@@ -21,7 +21,6 @@ const app = express();
 
 const corsOptions = {
     origin: ['http://localhost:5173', 'https://iridescent-mousse-e5cc8b.netlify.app'],
-    // origin: 'http://localhost:5173', // Origen permitido
     credentials: true, // Habilita el envío de cookies y cabeceras de autorización
 };
 
