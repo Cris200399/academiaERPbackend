@@ -7,8 +7,9 @@ exports.register = async (req, res) => {
         // Configurar la cookie con el token
         res.cookie('authToken', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            // secure: process.env.NODE_ENV === 'production',
+            secure: true,
+            sameSite: 'None',
             maxAge: 3600000 // 1 hora
         });
 
@@ -35,7 +36,7 @@ exports.login = async (req, res) => {
             httpOnly: true,
             // secure: process.env.NODE_ENV === 'production',
             secure: true,
-            sameSite: 'Strict',
+            sameSite: 'None',
             maxAge: 3600000
         });
 
@@ -48,7 +49,7 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res) => {
     res.clearCookie('authToken', {
         httpOnly: true,
-        sameSite: 'Strict',
+        sameSite: 'None',
         // secure: process.env.NODE_ENV === 'production'
         secure: true
     });
@@ -63,6 +64,3 @@ exports.getMe = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
-
-
-
