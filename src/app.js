@@ -20,7 +20,7 @@ const app = express();
 
 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'https://iridescent-mousse-e5cc8b.netlify.app'],
+    origin: ['http://localhost:5173', 'https://iridescent-mousse-e5cc8b.netlify.app', 'https://academiaerpfrontend.onrender.com'],
     credentials: true, // Habilita el envío de cookies y cabeceras de autorización
 };
 
@@ -44,7 +44,7 @@ app.use('/api/users', userRoutes);
 
 
 // Middleware de manejo de errores
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     console.error(err.stack);
     res.status(500).json({message: 'Something went wrong!'});
 });
