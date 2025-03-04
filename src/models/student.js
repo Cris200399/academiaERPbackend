@@ -84,6 +84,7 @@ const studentSchema = new mongoose.Schema({
     group: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Group',
+        sparse: true
     },
     dni: {
         type: String,
@@ -112,6 +113,12 @@ const studentSchema = new mongoose.Schema({
         default: 'sin_pago'
     }
 }, {timestamps: true});
+
+studentSchema.index({ email: 1 });
+studentSchema.index({ dni: 1 });
+studentSchema.index({ group: 1 });
+studentSchema.index({ status: 1 });
+studentSchema.index({ paymentStatus: 1 });
 
 
 const Student = mongoose.model('Student', studentSchema);
