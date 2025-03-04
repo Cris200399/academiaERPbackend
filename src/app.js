@@ -20,7 +20,7 @@ const app = express();
 
 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://localhost:5173', 'https://iridescent-mousse-e5cc8b.netlify.app', 'https://academiaerpfrontend.onrender.com'],
+    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://iridescent-mousse-e5cc8b.netlify.app', 'https://academiaerpfrontend.onrender.com'],
     credentials: true, // Habilita el envío de cookies y cabeceras de autorización
 };
 
