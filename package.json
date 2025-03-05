@@ -24,6 +24,8 @@
     "mongoose": "8.9.5",
     "multer-gridfs-storage": "^5.0.2",
     "node-cron": "^3.0.3",
+    "pdf-lib": "^1.17.1",
+    "sharp": "^0.33.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }

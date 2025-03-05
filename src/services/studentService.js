@@ -1,9 +1,11 @@
+const sharp = require('sharp');
 const Student = require('../models/student');
 const Group = require('../models/groupClass');
 const Guardian = require('../models/guardian');
 
-const {formatDate} = require('../utils/utils.js');
 const {getAge} = require("../utils/utils");
+const { PDFDocument } = require('pdf-lib');
+
 
 const gridFSService = require('../services/gridfsService');
 const {removeStudentFromGroup} = require("./groupClassService");
@@ -164,18 +166,27 @@ exports.updateProfileImage = async (id, imageFile) => {
             await gridFSService.deleteImageFile(student.profileImageId);
         }
 
-        // Subir nueva imagen
-        // Actualizar referencia en el estudiante
-        student.profileImageId = await gridFSService.uploadImageFile(imageFile);
+        // Optimizar la imagen
+        const optimizedImage = await sharp(imageFile.buffer)
+            .resize(500, 500) // Redimensionar la imagen
+            .jpeg({ quality: 80 }) // Convertir a JPEG con calidad 80
+            .toBuffer();
+
+        // Subir nueva imagen optimizada
+        student.profileImageId = await gridFSService.uploadImageFile({
+            buffer: optimizedImage,
+            originalname: imageFile.originalname,
+            mimetype: 'image/jpeg'
+        });
+
         return await student.save();
     } catch (error) {
         throw new Error('Error al actualizar la imagen de perfil: ' + error.message);
     }
-}
+};
 
 exports.updateDocumentFile = async (id, documentFile) => {
     try {
-
         const student = await Student.findById(id);
         if (!student) {
             throw new Error('Estudiante no encontrado');
@@ -186,8 +197,21 @@ exports.updateDocumentFile = async (id, documentFile) => {
             await gridFSService.deleteDocumentFile(student.documentId);
         }
 
-        // Subir nuevo documento
-        const fileId = await gridFSService.uploadDocumentFile(documentFile);
+        // Optimizar el documento PDF
+        const pdfDoc = await PDFDocument.load(documentFile.buffer);
+        const pages = pdfDoc.getPages();
+        pages.forEach(page => {
+            const { width, height } = page.getSize();
+            page.setSize(width * 0.9, height * 0.9); // Redimensionar las páginas
+        });
+        const optimizedPdf = await pdfDoc.save();
+
+        // Subir nuevo documento optimizado
+        const fileId = await gridFSService.uploadDocumentFile({
+            buffer: optimizedPdf,
+            originalname: documentFile.originalname,
+            mimetype: 'application/pdf'
+        });
         student.documentId = fileId;
         await student.save();
 
@@ -195,7 +219,7 @@ exports.updateDocumentFile = async (id, documentFile) => {
     } catch (error) {
         throw new Error('Error al actualizar el documento: ' + error.message);
     }
-}
+};
 
 exports.changeStudentStatus = async (id, status) => {
     const student = await Student.findById(id);
