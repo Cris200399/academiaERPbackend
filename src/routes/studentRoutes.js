@@ -5,8 +5,6 @@ const StudentController = require('../controllers/studentController');
 
 const authMiddleware = require('../middleware/authMiddleware');
 
-
-
 const router = express.Router();
 
 const storage = multer.memoryStorage();

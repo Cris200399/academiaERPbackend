@@ -38,7 +38,7 @@ const updateStudentPaymentStatus = async (today, student) => {
 
         student.paymentStatus = paymentStatus;
         await student.save();
-    }else{
+    } else {
         student.paymentStatus = 'sin_pago';
         await student.save();
     }

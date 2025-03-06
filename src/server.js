@@ -24,5 +24,5 @@ connectDB();
 swaggerDocs(app);
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}/api-docs/`);
+    console.log(`Servidor corriendo en ${process.env.BASE_URL || 'http://localhost'}:${PORT}/api-docs/`);
 });
