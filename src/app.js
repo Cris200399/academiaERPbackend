@@ -44,9 +44,9 @@ app.use('/api/users', userRoutes);
 
 
 // Middleware de manejo de errores
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({message: 'Something went wrong!'});
+    res.status(500).send('Something broke!');
 });
 
 module.exports = app;

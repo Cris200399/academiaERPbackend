@@ -2,18 +2,18 @@ const mongoose = require('mongoose');
 const {GridFSBucket} = require("mongodb");
 
 
-let gridfsBucketImages = null;
-let gridfsBucketDocuments = null;
+let gridFsBucketImages = null;
+let gridFsBucketDocuments = null;
 
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
 
-        gridfsBucketImages = await new GridFSBucket(mongoose.connection.db, {
+        gridFsBucketImages = await new GridFSBucket(mongoose.connection.db, {
             bucketName: 'images'
         });
 
-        gridfsBucketDocuments = await new GridFSBucket(mongoose.connection.db, {
+        gridFsBucketDocuments = await new GridFSBucket(mongoose.connection.db, {
             bucketName: 'documents'
         });
 
@@ -25,17 +25,17 @@ const connectDB = async () => {
 };
 
 const getGridFSBucketImages = () => {
-    if (!gridfsBucketImages) {
+    if (!gridFsBucketImages) {
         throw new Error('GridFS no está inicializado');
     }
-    return gridfsBucketImages;
+    return gridFsBucketImages;
 };
 
 const getGridFSBucketDocuments = () => {
-    if (!gridfsBucketDocuments) {
+    if (!gridFsBucketDocuments) {
         throw new Error('GridFS no está inicializado');
     }
-    return gridfsBucketDocuments;
+    return gridFsBucketDocuments;
 };
 
 module.exports = {connectDB, getGridFSBucketImages, getGridFSBucketDocuments};

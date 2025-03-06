@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const {GridFSBucket} = require('mongodb');
 const {getGridFSBucketImages, getGridFSBucketDocuments} = require("../config/database");
 
 class GridFSService {
